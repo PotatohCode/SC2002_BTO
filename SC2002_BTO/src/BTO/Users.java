@@ -1,9 +1,17 @@
 package BTO;
 
 public class Users {
+	
+	private String nric;
+	private String password = "password";
+	private int age;
+	private boolean married;
 
-	public Users() {
-		// TODO Auto-generated constructor stub
+	public Users(String nric, String password, int age, boolean married) {
+		this.nric = nric;
+		this.password = password;
+		this.age = age;
+		this.married = married;
 	}
 
 }
