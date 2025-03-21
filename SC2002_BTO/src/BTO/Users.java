@@ -7,6 +7,7 @@ public class Users {
 	private String password = "password";
 	private int age;
 	private boolean married;
+	private String keanan;
 
 	public Users(String nric, String password, int age, boolean married, boolean test) {
 		this.nric = nric;
@@ -14,6 +15,7 @@ public class Users {
 		this.age = age;
 		this.married = married;
 		this.test = false;
+		this.keanan = "hi";
 	}
 
 }
