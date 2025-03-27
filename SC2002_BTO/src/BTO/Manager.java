@@ -4,6 +4,7 @@ public class Manager extends Users{
 
 	public Manager() {
 		// TODO Auto-generated constructor stub
+		test = 1;
 	}
 
 }
