@@ -1,9 +1,11 @@
 package BTO;
 
-public class Manager extends Users{
+public class Manager extends Users {
+	
+	private int btoId;
 
-	public Manager() {
-		// TODO Auto-generated constructor stub
+	public Manager(String nric, String name, String password) {
+		super(nric, name, password, "manager");
 	}
 
 }
