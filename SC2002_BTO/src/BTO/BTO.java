@@ -18,8 +18,9 @@ public class BTO implements Searchable {
 	private Manager manager;
 	private boolean visible;
 	private List<Application> applicationList = new ArrayList<>();
-	private List<Integer> enquiriesList = new ArrayList<>();
-	private List<Integer> officerList = new ArrayList<>();
+	private List<Enquiries> enquiriesList = new ArrayList<>();
+	private List<Application> officerAppList = new ArrayList<>();
+	private List<Officer> officerList = new ArrayList<>();
 
 	public BTO(String name, String neighbourhood, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
 		this.name = name;
@@ -55,6 +56,14 @@ public class BTO implements Searchable {
 		return this.num3Rooms;
 	}
 	
+	public int getMaxOfficer() {
+		return this.maxOfficer;
+	}
+	
+	public int getNumOfficer() {
+		return this.officerList.size();
+	}
+	
 	public Date getApplicationStart() {
 		return this.applicationStart;
 	}
@@ -69,6 +78,18 @@ public class BTO implements Searchable {
 	
 	public boolean getVisible() {
 		return this.visible;
+	}
+	
+	public List<Application> getOfficerApplications() {
+		return this.officerAppList;
+	}
+	
+	public List<Application> getApplications() {
+		return this.applicationList;
+	}
+	
+	public List<Enquiries> getEnquiries() {
+		return this.enquiriesList;
 	}
 	
 	// setter
@@ -93,6 +114,12 @@ public class BTO implements Searchable {
 	public void setNum3Rooms(int num, int id) {
 		if (this.authManager(id)) {
 			this.num3Rooms = num;
+		}
+	}
+	
+	public void setMaxOfficer(int num, int id) {
+		if (this.authManager(id) ) {
+			this.maxOfficer = num;
 		}
 	}
 	
@@ -126,8 +153,8 @@ public class BTO implements Searchable {
 	}
 	
 	public boolean authOfficer(int id) {
-		for (int officerId : this.officerList) {
-			if (id == officerId) {
+		for (Officer officer : this.officerList) {
+			if (id == officer.getId()) {
 				return true;
 			}
 		}
@@ -144,6 +171,10 @@ public class BTO implements Searchable {
 		if (this.authManager(id) || this.authOfficer(id)) {
 			this.num3Rooms--;
 		}
+	}
+	
+	public void removeApplication(Application application) {
+		this.applicationList.remove(application);
 	}
 	
 	// search by id

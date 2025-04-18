@@ -83,18 +83,20 @@ public class Applicant extends Users {
 	}
 	
 	// application functions
-	public void createApplication(BTO bto, int roomType) {
+	public Application createApplication(BTO bto, int roomType) {
 		if (this.canApplyBTO(bto, roomType)) {
-			Application apply = new Application(this.getId(), bto.getId(), roomType);
+			Application apply = new Application(this, bto.getId(), roomType);
 			this.btoId = bto.getId();
 			this.applicationId = apply.getId();
+			return apply;
 		} else {
 			System.out.println("You are not applicable to apply for this BTO project");
+			return null;
 		}
 	}
 	
 	public void withdrawApplication(Application application) {
-		if (application.getId() == this.applicationId && application.getStatus() == "successful") {
+		if (application.getId() == this.applicationId && application.getApplicant().getId() == this.getId() && application.getStatus() == "successful") {
 			application.setStatus("withdraw", this.getRole());
 		} else {
 			System.out.println("Unable to withdraw");
@@ -102,21 +104,25 @@ public class Applicant extends Users {
 	}
 	
 	// enquiry function
-	public void createEnquiries(String inpEnquiry, int btoId) {
+	public Enquiries createEnquiries(String inpEnquiry, int btoId) {
 		if (this.btoId == btoId) {
 			Enquiries enquiry = new Enquiries(inpEnquiry);
 			this.enquiriesId.add(enquiry.getId());
+			return enquiry;
+		} else {
+			System.out.println("Something went wrong");
+			return null;
 		}
 	}
 	
 	public void editEnquiries(Enquiries enquiry, String inpEnquiry) {
-		if (this.enquiriesId.contains(enquiry.getId())) {
+		if (this.enquiriesId.contains(enquiry.getId()) && enquiry.getEnquirierId() == this.getId()) {
 			enquiry.setEnquiry(inpEnquiry);
 		}
 	}
 	
 	public void deleteEnquiries(int enquiryId) {
-		this.enquiriesId.remove(enquiryId);
+		this.enquiriesId.remove(enquiryId); // need to remove at BTOApp
 	}
 	
 //	public void viewEnquiries() {

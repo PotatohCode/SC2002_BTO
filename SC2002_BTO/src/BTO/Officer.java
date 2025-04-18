@@ -1,7 +1,6 @@
 package BTO;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Officer extends Applicant {
@@ -39,17 +38,19 @@ public class Officer extends Applicant {
 	}
 	
 	public boolean canApplyOfficer(int btoId, boolean clash) {
-		return !clash && btoId != this.btoId && managingId.contains(btoId);
+		return !clash && btoId != this.btoId && !managingId.contains(btoId);
 	}
 	
 	// application functions
-	public void createOfficerApplication(BTO bto, boolean clash) {
+	public Application createOfficerApplication(BTO bto, boolean clash) {
 		if (this.canApplyOfficer(bto.getId(), clash)) {
-			Application apply = new Application(this.getId(), bto.getId(), "officer");
+			Application apply = new Application(this, bto.getId(), "pending", "officer");
 			this.btoId = bto.getId();
 			this.applicationId.add(bto.getId());
+			return apply;
 		} else {
 			System.out.println("You are not applicable to apply for this BTO project");
+			return null;
 		}
 	}
 	

@@ -23,9 +23,10 @@ public class Users {
 	private String role;
 
 	/**
-	 * Constructor class for Applicant & Officer
+	 * Constructor class
 	 * @param nric : get nric of user
 	 * @param name : get name of user
+	 * @param age : get age of user
 	 * @param password : get password of user
 	 * @param married : get marriage status of user
 	 * @param role : get role of user; auto fill from child class
@@ -36,22 +37,6 @@ public class Users {
 		this.name = name;
 		this.password = password;
 		this.isMarried = married;
-		this.role = role;
-		this.userId = idCounter++;
-	}
-	
-	/**
-	 * Constructor class for Manager
-	 * @param nric : get nric of user
-	 * @param name : get name of user
-	 * @param password : get password of user
-	 * @param role : get role of user; auto fill from child class
-	 * id : identifier that is auto incremented for each creation of user
-	 */
-	public Users(String nric, String name, String password, String role) {
-		this.nric = nric;
-		this.name = name;
-		this.password = password;
 		this.role = role;
 		this.userId = idCounter++;
 	}
@@ -145,7 +130,7 @@ public class Users {
 	
 	/**
 	 * Search for user by NRIC
-	 * @param nric
+	 * @param nric : get nric input
 	 * @return boolean : whether the current object is the user
 	 */
 	public boolean searchNric(String nric) {

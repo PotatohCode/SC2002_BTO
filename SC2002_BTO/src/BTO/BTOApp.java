@@ -116,7 +116,7 @@ public class BTOApp {
 					newUser = new Officer(value[nricIdx],value[nameIdx],Integer.parseInt(value[ageIdx]),value[passwordIdx],married);
 					userList.addItem(newUser);
 				} else if (role.toLowerCase().equals("manager")) {
-					newUser = new Manager(value[nricIdx],value[nameIdx],value[passwordIdx]);
+					newUser = new Manager(value[nricIdx],value[nameIdx],Integer.parseInt(value[ageIdx]),value[passwordIdx],married);
 					userList.addItem(newUser);
 				} else {
 					System.out.printf("Error: Tried to add unrecognised role %s\n", role);

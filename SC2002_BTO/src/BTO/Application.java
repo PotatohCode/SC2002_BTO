@@ -4,21 +4,22 @@ public class Application implements Searchable {
 	
 	private int applicationId;
 	private static int idCounter = 0;
-	private int applicantId;
+	private Users applicant;
 	private int btoId;
 	private int roomType;
 	private String status = "pending";
 	private String type = "bto";
 	
-	public Application(int applicantId, int btoId, String type) {
-		this.applicantId = applicantId;
+	public Application(Users applicant, int btoId, String status, String type) {
+		this.applicant = applicant;
 		this.btoId = btoId;
-		this.applicationId = idCounter++;
+		this.status = status;
 		this.type = type;
+		this.applicationId = idCounter++;
 	}
 	
-	public Application(int applicantId, int btoId, int roomType) {
-		this.applicantId = applicantId;
+	public Application(Users applicant, int btoId, int roomType) {
+		this.applicant = applicant;
 		this.btoId = btoId;
 		this.roomType = roomType;
 		this.applicationId = idCounter++;
@@ -29,8 +30,8 @@ public class Application implements Searchable {
 		return this.applicationId; 
 	}
 	
-	public int getApplicantId() {
-		return this.applicantId;
+	public Users getApplicant() {
+		return this.applicant;
 	}
 	
 	public int getBTOId() {
