@@ -1,6 +1,10 @@
 package BTO;
 
-public class BTO {
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class BTO implements Searchable {
 	
 	private int btoId;
 	private static int idCounter = 0;
@@ -9,15 +13,15 @@ public class BTO {
 	private int num2Rooms;
 	private int num3Rooms;
 	private int maxOfficer = 10;
-	private int applicationStart; //DDMMYY
-	private int applicationEnd; //DDMMYY
+	private Date applicationStart;
+	private Date applicationEnd;
 	private Manager manager;
 	private boolean visible;
-	private int[] applicationList;
-	private int[] enquiriesList;
-	private int[] officerList;
+	private List<Application> applicationList = new ArrayList<>();
+	private List<Integer> enquiriesList = new ArrayList<>();
+	private List<Integer> officerList = new ArrayList<>();
 
-	public BTO(String name, String neighbourhood, int num2Rooms, int num3Rooms, int applicationStart, int applicationEnd, Manager manager, int maxOfficer, boolean visible) {
+	public BTO(String name, String neighbourhood, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
 		this.name = name;
 		this.neighbourhood = neighbourhood;
 		this.num2Rooms = num2Rooms;
@@ -31,6 +35,10 @@ public class BTO {
 	}
 	
 	// getter
+	public int getId() {
+		return this.btoId;
+	}
+	
 	public String getName() {
 		return this.name;
 	}
@@ -47,11 +55,11 @@ public class BTO {
 		return this.num3Rooms;
 	}
 	
-	public int getApplicationStart() {
+	public Date getApplicationStart() {
 		return this.applicationStart;
 	}
 	
-	public int getApplicationEnd() {
+	public Date getApplicationEnd() {
 		return this.applicationEnd;
 	}
 	
@@ -64,6 +72,53 @@ public class BTO {
 	}
 	
 	// setter
+	public void setName(String name, int id) {
+		if (this.authManager(id)) {
+			this.name = name;
+		}
+	}
+	
+	public void setNeighbourhood(String neighbourhood, int id) {
+		if (this.authManager(id)) {
+			this.neighbourhood = neighbourhood;
+		}
+	}
+	
+	public void setNum2Rooms(int num, int id) {
+		if (this.authManager(id)) {
+			this.num2Rooms = num;
+		}
+	}
+	
+	public void setNum3Rooms(int num, int id) {
+		if (this.authManager(id)) {
+			this.num3Rooms = num;
+		}
+	}
+	
+	public void setApplicationStart(Date date, int id) {
+		if (this.authManager(id)) {
+			this.applicationStart = date;
+		}
+	}
+	
+	public void setApplicationEnd(Date date, int id) {
+		if (this.authManager(id)) {
+			this.applicationEnd = date;
+		}
+	}
+	
+	public void setManager(Manager m, int id) {
+		if (this.authManager(id)) {
+			this.manager = m;
+		}
+	}
+	
+	public void setVisible(boolean visible, int id) {
+		if (this.authManager(id)) {
+			this.visible = visible;
+		}
+	}
 	
 	//functions
 	public boolean authManager(int id) {
@@ -76,6 +131,30 @@ public class BTO {
 				return true;
 			}
 		}
+		return false;
+	}
+	
+	public void reduceNum2Rooms(int id) {
+		if (this.authManager(id) || this.authOfficer(id)) {
+			this.num2Rooms--;
+		}
+	}
+	
+	public void reduceNum3Rooms(int id) {
+		if (this.authManager(id) || this.authOfficer(id)) {
+			this.num3Rooms--;
+		}
+	}
+	
+	// search by id
+	@Override
+	public boolean searchId(int id) {
+		return this.btoId == id;
+	}
+
+	@Override
+	public boolean searchOtherId(int id) {
+		// blank
 		return false;
 	}
 	

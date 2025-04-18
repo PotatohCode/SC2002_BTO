@@ -1,10 +1,12 @@
 package BTO;
 
-public class Enquiries {
+public class Enquiries implements Searchable {
 	
 	private int enquiryId;
+	private int btoId;
 	private static int idCounter = 0;
-    private int replierId;  
+	private int enquirierId;
+    private int replierId;
     private String enquiry;
     private String reply;
     
@@ -26,6 +28,10 @@ public class Enquiries {
         return this.reply;
     }
     
+    public int getEnquirierId() {
+    	return this.enquirierId;
+    }
+    
     public int getRepierId() {
     	return this.replierId;
     }
@@ -35,13 +41,23 @@ public class Enquiries {
         this.enquiry = enquiry;
     }
 
-    public void setReply(String reply) {
-        this.reply = reply;
+    public void setReply(String reply, int id, String role) {
+    	if (role == "officer" || role == "manager" ) {
+    		this.reply = reply;	
+    		this.replierId = id;
+    	}
     }
+    
+	// search by id
+	@Override
+	public boolean searchId(int id) {
+		return this.enquiryId == id;
+	}
 
-    public void setReplierId(int id) {
-        this.replierId = id;
-    }
+	@Override
+	public boolean searchOtherId(int id) {
+		return this.btoId == id;
+	}
     
     // function
 //    public void printEnquiry() {
