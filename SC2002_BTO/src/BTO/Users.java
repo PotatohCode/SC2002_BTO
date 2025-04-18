@@ -14,8 +14,9 @@ public class Users {
 	
 	private int userId;
 	private static int idCounter = 0;
-	private String nric;
+	protected String nric;
 	private String name;
+	private int age;
 	private String password = "password";
 	private boolean isMarried;
 	private String filter = "alpha";
@@ -30,7 +31,7 @@ public class Users {
 	 * @param role : get role of user; auto fill from child class
 	 * id : identifier that is auto incremented for each creation of user
 	 */
-	public Users(String nric, String name, String password, boolean married, String role) {
+	public Users(String nric, String name, int age, String password, boolean married, String role) {
 		this.nric = nric;
 		this.name = name;
 		this.password = password;
@@ -77,6 +78,14 @@ public class Users {
 	 */
 	public String getName() {
 		return this.name;
+	}
+	
+	/**
+	 * Get Age
+	 * @return age
+	 */
+	public int getAge() {
+		return this.age;
 	}
 	
 	/**
@@ -132,5 +141,14 @@ public class Users {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Search for user by NRIC
+	 * @param nric
+	 * @return boolean : whether the current object is the user
+	 */
+	public boolean searchNric(String nric) {
+		return this.nric == nric;
 	}
 }
