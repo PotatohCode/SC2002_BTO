@@ -219,6 +219,7 @@ public class BTOApp {
 				System.out.println((a.getApplicationId() > -1 ? "2. Access application" : "2. Apply for BTO"));
 				System.out.println("3. Submit enquiry");
 				System.out.println("4. Access enquiries");
+				System.out.println("5. Logout");
 			
 				System.out.print(ANSI_CYAN + "Enter option: " + ANSI_RESET);
 				int menuOption = sc.nextInt();
@@ -245,7 +246,7 @@ public class BTOApp {
 								System.out.print(ANSI_CYAN + "Enter room type: " + ANSI_RESET);
 								inpRT = sc.nextInt();
 								sc.nextLine();
-								if (inpRT != 2 || inpRT != 3) throw new InvalidInput("room type"); // invalid capture
+								if (inpRT != 2 && inpRT != 3) throw new InvalidInput("room type"); // invalid capture
 							}
 							
 							Application application = a.createApplication(applyBTO, inpRT);
@@ -318,6 +319,9 @@ public class BTOApp {
 								System.out.println("Enquiry deleted!");
 								break;
 						}
+						break;
+					case 5:
+						return;
 				}
 			} catch (InputMismatchException ime) {
 				System.out.println("Invalid input!");
@@ -340,12 +344,25 @@ public class BTOApp {
 		//input bto project
 		csvParser(projectPath, btoList, userList);
 		
-		Users user = login(userList.getItems());
-		System.out.println("\nWelcome " + capitalize(user.getRole()) + " " + user.getName() + "!");
-		
-		if (user.getRole().equals("applicant")) {
-			Applicant applicant = (Applicant) user;
-			applicantMenu(btoList.getItems(), enquiryList.getItems(), applicant);
+		boolean run = true;
+		while (run) {
+			System.out.println("1. Login\n2. Close");
+			System.out.print(ANSI_CYAN + "Enter option: " + ANSI_RESET);
+			int start = sc.nextInt();
+			sc.nextLine();
+			System.out.println();
+			if (start == 1) {
+				Users user = login(userList.getItems());
+				System.out.println("\nWelcome " + capitalize(user.getRole()) + " " + user.getName() + "!");
+				
+				if (user.getRole().equals("applicant")) {
+					Applicant applicant = (Applicant) user;
+					applicantMenu(btoList.getItems(), enquiryList.getItems(), applicant);
+				}
+			} else {
+				System.out.println(ANSI_RED + "End of program" + ANSI_RESET);
+				sc.close();
+			}
 		}
 	}
 

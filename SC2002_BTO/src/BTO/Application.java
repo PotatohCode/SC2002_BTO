@@ -65,7 +65,9 @@ public class Application implements Searchable {
 	
 	// functions
 	public void printApplication() {
-		System.out.println("Application Id: " + this.applicationId + " Status: " + this.status);
+		System.out.println("Application Id: " + this.applicationId 
+							+ "\nStatus: " + this.status
+							+ (this.type.equals("bto") ? "\nRoom Type: "  + this.roomType : ""));
 	}
 	
 	// search by id
