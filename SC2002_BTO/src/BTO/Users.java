@@ -12,6 +12,11 @@ import java.util.Objects;
  */
 public class Users {
 	
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	
 	private int userId;
 	private static int idCounter = 0;
 	protected String nric;

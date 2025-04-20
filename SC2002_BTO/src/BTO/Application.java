@@ -1,6 +1,6 @@
 package BTO;
 
-public class Application implements Searchable {
+public class Application {
 	
 	private int applicationId;
 	private static int idCounter = 0;
@@ -10,6 +10,7 @@ public class Application implements Searchable {
 	private String status = "pending";
 	private String type = "bto";
 	
+	// officer application
 	public Application(Users applicant, int btoId, String status, String type) {
 		this.applicant = applicant;
 		this.btoId = btoId;
@@ -18,6 +19,7 @@ public class Application implements Searchable {
 		this.applicationId = idCounter++;
 	}
 	
+	// bto application
 	public Application(Users applicant, int btoId, int roomType) {
 		this.applicant = applicant;
 		this.btoId = btoId;
@@ -46,6 +48,10 @@ public class Application implements Searchable {
 		return this.status;
 	}
 	
+	public String getType() {
+		return this.type;
+	}
+	
 	// setter
 //	public void setRoomType(int roomType) {
 //		if (roomType == 2 || roomType == 3) {
@@ -56,7 +62,7 @@ public class Application implements Searchable {
 	public void setStatus(String status, String role) {
 		if (type == "bto" && (role == "manager" || role == "officer")) {
 			this.status = status; 
-		} else if (type == "bto" && role == "applicant" && status == "withdraw") {
+		} else if (type == "bto" && role == "applicant" && (status.equals("withdraw") || status.equals("booking"))) {
 			this.status = status;
 		} else if (type == "officer" && role == "manager") {
 			this.status = status;
@@ -68,17 +74,5 @@ public class Application implements Searchable {
 		System.out.println("Application Id: " + this.applicationId 
 							+ "\nStatus: " + this.status
 							+ (this.type.equals("bto") ? "\nRoom Type: "  + this.roomType : ""));
-	}
-	
-	// search by id
-	@Override
-	public boolean searchId(int id) {
-		return this.applicationId == id;
-	}
-
-	@Override
-	public boolean searchOtherId(int id) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

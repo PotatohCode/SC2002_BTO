@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Officer extends Applicant {
 	
 	private List<Integer> managingId = new ArrayList<>();
-	private List<Integer> applicationId = new ArrayList<>();
+	private List<Integer> officerAppId = new ArrayList<>();
 	private Scanner sc = new Scanner(System.in);
 
 	public Officer (String nric, String name, int age, String password, boolean married) {
@@ -20,53 +20,32 @@ public class Officer extends Applicant {
 		return this.managingId;
 	}
 	
-	public List<Integer> getApplication() {
-		return this.applicationId;
+	public List<Integer> getOfficerApp() {
+		return this.officerAppId;
 	}
 	
-	// check bto qualification
-	public boolean canApplyBTO(BTO bto, int roomType) {
-		boolean can = false;
-		// check user qualification
-		if (this.btoId == -1 && managingId.contains(bto.getId()) && (this.getMarried() && this.getAge() >= 21) || (!this.getMarried() && this.getAge() >= 35 && roomType == 2)) {
-			// check bto qualification
-			switch (roomType) {
-				case 2: can = bto.getNum2Rooms() > 0;
-				break;
-				case 3: can = bto.getNum3Rooms() > 0;
-				break;
-			}
-		}
-		return can;
+	// setter
+	public void addManagingBTO(int btoId) {
+		this.managingId.add(btoId);
 	}
 	
-	public boolean canApplyOfficer(int btoId, boolean clash) {
-		return !clash && btoId != this.btoId && !managingId.contains(btoId);
+	// functions
+	// check criteria to apply officer
+	public boolean canApplyOfficer(BTO bto, boolean clash) {
+		return !clash && bto.getId() != this.btoId && !this.managingId.contains(bto.getId()) && !this.officerAppId.contains(bto.getId()) && bto.getMaxOfficer() > 0;
 	}
 	
 	// application functions
 	public Application createOfficerApplication(BTO bto, boolean clash) {
-		if (this.canApplyOfficer(bto.getId(), clash)) {
+		if (this.canApplyOfficer(bto, clash)) {
 			Application apply = new Application(this, bto.getId(), "pending", "officer");
 			this.btoId = bto.getId();
-			this.applicationId.add(bto.getId());
+			this.officerAppId.add(bto.getId());
+			System.out.println(ANSI_GREEN + "Application submitted!\n"+ ANSI_RESET);
 			return apply;
 		} else {
-			System.out.println("You are not applicable to apply for this BTO project");
+			System.out.println(ANSI_RED + "You are not applicable to apply for this BTO project\n"+ ANSI_RESET);
 			return null;
-		}
-	}
-	
-	// view projects
-	public void viewManagingProject(List<BTO> btoList) {
-		List<BTO> availList = btoList.stream().filter(b -> this.clashApplication(b.getApplicationStart(), b.getApplicationEnd(), this.getManaging(), btoList)).toList();
-		List<BTO> viewList = new ArrayList<>();
-		for (BTO bto: availList) {
-			if (bto.getVisible()) {
-				viewList.add(bto);
-			} else if (this.managingId.contains(bto.getId())) {
-				viewList.add(bto);
-			}
 		}
 	}
 	
@@ -107,27 +86,47 @@ public class Officer extends Applicant {
 //	}
 	
 	// book room
-	public void bookRoom(BTO bto, Applicant applicant, Application application) {
-		if (application.getStatus() == "successful") {
-			application.setStatus("booked", "officer");
+	public String bookBTO(BTO bto, Application application) {
+		if (application.getStatus() == "booking" && this.managingId.contains(bto.getId())) {
 			switch (application.getRoomType()) {
-				case 2: bto.reduceNum2Rooms(this.getId());
+				case 2: 
+					if (bto.getNum2Rooms() > 0) {
+						bto.reduceNum2Rooms(this.getId());
+					} else {
+						System.out.println("Unable to book");
+						return null;
+					}
 				break;
-				case 3: bto.reduceNum3Rooms(this.getId());
+				case 3: 
+					if (bto.getNum3Rooms() > 0) {
+						bto.reduceNum3Rooms(this.getId());
+					} else {
+						System.out.println("Unable to book");
+						return null;
+					}
 				break;
 			}
+			Applicant applicant = (Applicant) application.getApplicant();
+			System.out.println(ANSI_GREEN + "Room numbers updated!"+ ANSI_RESET);
+			application.setStatus("booked", "officer");
+			System.out.println(ANSI_GREEN + "Application status updated!"+ ANSI_RESET);
+			applicant.setRoomType(application.getRoomType(), applicant.getNric(), this.getRole());
+			System.out.println(ANSI_GREEN + "Applicant profile updated!"+ ANSI_RESET);
+			System.out.println(ANSI_GREEN + "Booked successfully!"+ ANSI_RESET);
+			System.out.println(ANSI_GREEN + "Applicant NRIC: " + ANSI_RESET + applicant.getNric());
+			System.out.println();
+			return applicant.getNric();
+		} else {
+			System.out.println(ANSI_RED + "Unable to book"+ ANSI_RESET);
+			return null;
 		}
 	}
 	
 	// generate receipt
-	public void applicantReceipt(BTO bto, Applicant applicant, Application application) {
-		System.out.println("Applicant: " + applicant.getName() + "\n"
-							+ "NRIC: " + applicant.getNric() + "\n"
-							+ "Age: " + applicant.getAge() + "\n"
-							+ "Martial Status: " + (applicant.getMarried() ? "Married" : "Single") + "\n"
-							+ "Project: " + bto.getName() + "\n"
-							+ "Neighbourhood: " + bto.getNeighbourhood() + "\n"
-							+ "Flat Type: " + application.getRoomType());
+	public void applicantReceipt(BTO bto, Applicant applicant) {
+		applicant.printApplicant();
+		bto.printBTO();
+		System.out.println();
 	}
 
 }

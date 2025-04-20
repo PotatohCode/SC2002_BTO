@@ -23,6 +23,11 @@ public class Manager extends Users {
 		return this.managingId;
 	}
 	
+	// setter
+	public void addManagingBTO(int btoId) {
+		this.managingId.add(btoId);
+	}
+	
 	// functions
 	// view all BTO
 	public void viewBTOs(List<BTO> btoList, boolean own) {
@@ -76,20 +81,20 @@ public class Manager extends Users {
 	}
 	
 	// view all bto applications
-	public List<Application> viewApplications(BTO bto, String filter) {
-		int count = 1;
-		List<Application> applicationList = bto.getApplications();
-		if (filter != null) {
-			applicationList = applicationList.stream().filter(a -> a.getStatus() == filter).toList();
-		} else {
-			applicationList.sort((s1, s2) -> s1.getStatus().compareToIgnoreCase(s2.getStatus())); // sort by status
-		}
-		for (Application application : applicationList) {
-			Applicant applicant = (Applicant) application.getApplicant();
-			System.out.println(count++ + ". Name: " + applicant.getName() + " Room Type: " + application.getRoomType() + " Status: " + application.getStatus() + " Age: " + applicant.getAge() + " Maritial Status: " + (applicant.getMarried() ? "Married" : "Single"));
-		}
-		return applicationList; // for update status
-	}
+//	public List<Application> viewApplications(BTO bto, String filter) {
+//		int count = 1;
+//		List<Application> applicationList = bto.getApplications();
+//		if (filter != null) {
+//			applicationList = applicationList.stream().filter(a -> a.getStatus() == filter).toList();
+//		} else {
+//			applicationList.sort((s1, s2) -> s1.getStatus().compareToIgnoreCase(s2.getStatus())); // sort by status
+//		}
+//		for (Application application : applicationList) {
+//			Applicant applicant = (Applicant) application.getApplicant();
+//			System.out.println(count++ + ". Name: " + applicant.getName() + " Room Type: " + application.getRoomType() + " Status: " + application.getStatus() + " Age: " + applicant.getAge() + " Maritial Status: " + (applicant.getMarried() ? "Married" : "Single"));
+//		}
+//		return applicationList; // for update status
+//	}
 	
 	// update application status
 	public void updateApplicationStatus(BTO bto) {
@@ -115,7 +120,7 @@ public class Manager extends Users {
 	}
 	
 	// update withdraw status
-	public void updateWithdrawStatus(BTO bto) {
+	public void updateWithdrawStatus(BTO bto, List<Application> appList) {
 		List<Application> applicationList = this.viewApplications(bto, "withdraw");
 		System.out.print("Select application to update: ");
 		int option = sc.nextInt() - 1;
@@ -126,7 +131,7 @@ public class Manager extends Users {
 				applicationList.get(option).setStatus("successful", this.getRole());
 				break;
 			case 1:
-				bto.removeApplication(applicationList.get(option));
+//				appList.remove(application);
 				break;
 		}
 	}
@@ -161,6 +166,7 @@ public class Manager extends Users {
 		if (!clash) {
 			Manager btoManager = manager == null ? this : manager; // if null : use current manager
 			BTO newBTO = new BTO(name, neighbourhood, num2Rooms, num3Rooms, applicationStart, applicationEnd, btoManager, maxOfficer, visible);
+			this.managingId.add(newBTO.getId());
 			return newBTO;
 		} else {
 			System.out.println("This project timeline clashes with another project");

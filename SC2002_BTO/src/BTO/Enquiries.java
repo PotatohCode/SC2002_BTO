@@ -1,6 +1,6 @@
 package BTO;
 
-public class Enquiries implements Searchable {
+public class Enquiries {
 	
 	private int enquiryId;
 	private int btoId;
@@ -10,8 +10,9 @@ public class Enquiries implements Searchable {
     private String enquiry;
     private String reply;
     
-    public Enquiries(String enquiry, int btoId) {
+    public Enquiries(String enquiry, int enquirierId, int btoId) {
     	this.enquiry = enquiry;
+    	this.enquirierId = enquirierId;
     	this.btoId = btoId;
     	this.enquiryId = idCounter++;
     }
@@ -33,7 +34,7 @@ public class Enquiries implements Searchable {
     	return this.enquirierId;
     }
     
-    public int getRepierId() {
+    public int getReplierId() {
     	return this.replierId;
     }
     
@@ -47,43 +48,19 @@ public class Enquiries implements Searchable {
     }
 
     public void setReply(String reply, int id, String role) {
-    	if (role == "officer" || role == "manager" ) {
+    	if ((role == "officer" || role == "manager")) {
     		this.reply = reply;	
     		this.replierId = id;
+    		System.out.println("\u001B[32m" + "Reply submitted!\n" + "\u001B[0m");
+    	} else {
+    		System.out.println("\u001B[31m" + "Unable to reply\n" + "\u001B[0m");
     	}
     }
     
     // functions
     public void printEnquiry() {
-    	System.out.println("Enquiry Id: " + this.enquirierId
+    	System.out.println("Enquiry Id: " + this.enquiryId
     						+ "\nEnquiry: " + this.enquiry
-    						+ (this.replierId > -1 ? "\nReply: " + this.reply : "")
-    						+ "\n");
+    						+ (this.replierId > -1 ? "\nReply: " + this.reply : ""));
     }
-    
-	// search by id
-	@Override
-	public boolean searchId(int id) {
-		return this.enquiryId == id;
-	}
-
-	@Override
-	public boolean searchOtherId(int id) {
-		return this.btoId == id;
-	}
-    
-    // function
-//    public void printEnquiry() {
-//        System.out.println("Applicant: " + applicant.getNric());
-//        System.out.println("BTO Project: " + bto.getName());
-//        System.out.println("Enquiry: " + enquiry);
-//        if (reply.isEmpty()) {
-//            System.out.println("Reply: No reply yet");
-//        } else {
-//            System.out.println("Reply: " + reply);
-//        }
-//        if (replier != null)
-//            System.out.println("Replied by: " + replier.getNric());
-//    }
-
 }

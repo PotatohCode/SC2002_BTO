@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BTO implements Searchable {
+public class BTO {
 	
 	private int btoId;
 	private static int idCounter = 0;
@@ -18,8 +18,6 @@ public class BTO implements Searchable {
 	private Date applicationEnd;
 	private Manager manager;
 	private boolean visible;
-	private List<Application> applicationList = new ArrayList<>();
-	private List<Application> officerAppList = new ArrayList<>();
 	private List<Officer> officerList = new ArrayList<>();
 
 	public BTO(String name, String neighbourhood, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
@@ -80,14 +78,6 @@ public class BTO implements Searchable {
 		return this.visible;
 	}
 	
-	public List<Application> getOfficerApplications() {
-		return this.officerAppList;
-	}
-	
-	public List<Application> getApplications() {
-		return this.applicationList;
-	}
-	
 	// setter
 	public void setName(String name, int id) {
 		if (this.authManager(id)) {
@@ -137,6 +127,13 @@ public class BTO implements Searchable {
 		}
 	}
 	
+	public void setOfficers(List<Officer> o, int id) {
+		if (this.authManager(id)) {
+			this.officerList.addAll(o);
+			this.maxOfficer -= o.size(); // did not capture if csv file has more officer than max
+		}
+	}
+	
 	public void setVisible(boolean visible, int id) {
 		if (this.authManager(id)) {
 			this.visible = visible;
@@ -169,13 +166,17 @@ public class BTO implements Searchable {
 		}
 	}
 	
-	public void addApplication(Application application) {
-		this.applicationList.add(application);
-	}
-	
-	public void removeApplication(Application application) {
-		this.applicationList.remove(application);
-	}
+//	public void addApplication(Application application) {
+//		this.applicationList.add(application);
+//	}
+//	
+//	public void removeApplication(Application application) {
+//		this.applicationList.remove(application);
+//	}
+//	
+//	public void addOfficerApp(Application application) {
+//		this.officerAppList.add(application);
+//	}
 	
 	public String stringDate(Date date) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -188,26 +189,7 @@ public class BTO implements Searchable {
 							"Application Start: " + stringDate(this.applicationStart) + "\n" +
 							"Application End: " + stringDate(this.applicationEnd) + "\n" +
 							"No. of 2 Rooms: " + this.num2Rooms + "\n" +
-							"No. of 3 Rooms: " + this.num3Rooms + "\n");
-	}
-	
-	// get application by id
-	public Application getApplicationById(int id) {
-		return this.applicationList.stream()
-				.filter(a -> a.getId() == id)
-				.findFirst().orElse(null);
-	}
-	
-	// search by id
-	@Override
-	public boolean searchId(int id) {
-		return this.btoId == id;
-	}
-
-	@Override
-	public boolean searchOtherId(int id) {
-		// blank
-		return false;
+							"No. of 3 Rooms: " + this.num3Rooms);
 	}
 	
 //	public void replyEnquiries(int id, String reply) {

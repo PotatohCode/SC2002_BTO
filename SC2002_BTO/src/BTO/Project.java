@@ -27,8 +27,8 @@ public class Project<T> {
 	}
 	
 	// remove
-	public void removeItem(int key) {
-		this.list.remove(key);
+	public void removeItem(T item) {
+		this.list.remove(item);
 	}
 
 }
