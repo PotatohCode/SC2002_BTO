@@ -1,5 +1,6 @@
 package BTO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,6 @@ public class BTO implements Searchable {
 	private Manager manager;
 	private boolean visible;
 	private List<Application> applicationList = new ArrayList<>();
-	private List<Enquiries> enquiriesList = new ArrayList<>();
 	private List<Application> officerAppList = new ArrayList<>();
 	private List<Officer> officerList = new ArrayList<>();
 
@@ -86,10 +86,6 @@ public class BTO implements Searchable {
 	
 	public List<Application> getApplications() {
 		return this.applicationList;
-	}
-	
-	public List<Enquiries> getEnquiries() {
-		return this.enquiriesList;
 	}
 	
 	// setter
@@ -173,8 +169,33 @@ public class BTO implements Searchable {
 		}
 	}
 	
+	public void addApplication(Application application) {
+		this.applicationList.add(application);
+	}
+	
 	public void removeApplication(Application application) {
 		this.applicationList.remove(application);
+	}
+	
+	public String stringDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		return dateFormat.format(date);
+	}
+	
+	public void printBTO() {
+		System.out.println("Project Id: " + this.btoId + "\n" + 
+							"Project Name: " + this.name + "\n" +
+							"Application Start: " + stringDate(this.applicationStart) + "\n" +
+							"Application End: " + stringDate(this.applicationEnd) + "\n" +
+							"No. of 2 Rooms: " + this.num2Rooms + "\n" +
+							"No. of 3 Rooms: " + this.num3Rooms + "\n");
+	}
+	
+	// get application by id
+	public Application getApplicationById(int id) {
+		return this.applicationList.stream()
+				.filter(a -> a.getId() == id)
+				.findFirst().orElse(null);
 	}
 	
 	// search by id
@@ -195,16 +216,6 @@ public class BTO implements Searchable {
 //				
 //			}
 //		}
-//	}
-	
-//	public void printBTO() {
-//		System.out.println("Project Name: " + this.name + "\n" +
-//							"Managed By: " + this.manager.name + "\n" +
-//							"No. of Officers: " + this.countOfficer() + "\n" +
-//							"Visibility: " + (this.visible ? "Visible" : "Not Visible") + "\n" +
-//							"Application Start: " + this.applicationStart + "\t Application End: " + this.applicationEnd + "\n" +
-//							"No. of 2 Rooms: " + this.num2Rooms + "\t No. Left: " + this.remaining2Room() + "\n" +
-//							"No. of 3 Rooms: " + this.num3Rooms + "\t No. Left: " + this.remaining3Room());
 //	}
 	
 //	public void updateOfficerStatus(Officer o, String status, Users u) {

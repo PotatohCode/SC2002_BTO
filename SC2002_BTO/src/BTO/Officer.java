@@ -1,12 +1,15 @@
 package BTO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 public class Officer extends Applicant {
 	
 	private List<Integer> managingId = new ArrayList<>();
 	private List<Integer> applicationId = new ArrayList<>();
+	private Scanner sc = new Scanner(System.in);
 
 	public Officer (String nric, String name, int age, String password, boolean married) {
 		super(nric, name, age, password, married, "officer");
@@ -53,6 +56,55 @@ public class Officer extends Applicant {
 			return null;
 		}
 	}
+	
+	// view projects
+	public void viewManagingProject(List<BTO> btoList) {
+		List<BTO> availList = btoList.stream().filter(b -> this.clashApplication(b.getApplicationStart(), b.getApplicationEnd(), this.getManaging(), btoList)).toList();
+		List<BTO> viewList = new ArrayList<>();
+		for (BTO bto: availList) {
+			if (bto.getVisible()) {
+				viewList.add(bto);
+			} else if (this.managingId.contains(bto.getId())) {
+				viewList.add(bto);
+			}
+		}
+	}
+	
+	public boolean clashApplication(Date start, Date end, List<Integer> btoIdList, List<BTO> btoList) {
+		for (BTO bto : btoList) {
+			if (btoIdList.contains(bto.getId())) {
+				if (start.after(bto.getApplicationStart()) && end.before(bto.getApplicationEnd())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	// view all enquiries
+//	public List<Enquiries> viewEnquiries(BTO bto, String filter) {
+//		int count = 1;
+//		List<Enquiries> enquiryList = bto.getEnquiries();
+//		if (filter == "unread") {
+//			enquiryList = enquiryList.stream().filter(e -> e.getReply() == null).toList();
+//		} else {
+//			enquiryList.sort((s1, s2) -> s1.getReply().compareToIgnoreCase(s2.getReply())); // sort by reply
+//		}
+//		for (Enquiries enquiry : enquiryList) {
+//			System.out.println(count++ + ". Enquiry: " + enquiry.getEnquiry() + enquiry.getReply() != null ? ("\nReply: " + enquiry.getReply()) : "");
+//		}
+//		return enquiryList; // for update status
+//	}
+	
+	// reply enquiry
+//	public void replyEnquiries(BTO bto) {
+//		List<Enquiries> enquiryList = this.viewEnquiries(bto, "unread");
+//		System.out.print("Select enquiry to reply: ");
+//		int option = sc.nextInt() - 1;
+//		System.out.print("Enter reply: ");
+//		String reply = sc.nextLine();
+//		enquiryList.get(option).setReply(reply, this.getId(), this.getRole());
+//	}
 	
 	// book room
 	public void bookRoom(BTO bto, Applicant applicant, Application application) {

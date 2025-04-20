@@ -61,7 +61,11 @@ public class Application implements Searchable {
 		} else if (type == "officer" && role == "manager") {
 			this.status = status;
 		}
-		
+	}
+	
+	// functions
+	public void printApplication() {
+		System.out.println("Application Id: " + this.applicationId + " Status: " + this.status);
 	}
 	
 	// search by id

@@ -86,7 +86,7 @@ public class Manager extends Users {
 		}
 		for (Application application : applicationList) {
 			Applicant applicant = (Applicant) application.getApplicant();
-			System.out.println(count++ + ". Name: " + applicant.getName() + " Room Type: " + application.getRoomType() + " Status: " + application.getStatus());
+			System.out.println(count++ + ". Name: " + applicant.getName() + " Room Type: " + application.getRoomType() + " Status: " + application.getStatus() + " Age: " + applicant.getAge() + " Maritial Status: " + (applicant.getMarried() ? "Married" : "Single"));
 		}
 		return applicationList; // for update status
 	}
@@ -132,7 +132,7 @@ public class Manager extends Users {
 	}
 	
 	// view all enquiries
-//	public List<Enquiries> viewBTOEnquiries(BTO bto, String filter) {
+//	public List<Enquiries> viewEnquiries(BTO bto, String filter) {
 //		int count = 1;
 //		List<Enquiries> enquiryList = bto.getEnquiries();
 //		if (filter == "unread") {
@@ -141,9 +141,19 @@ public class Manager extends Users {
 //			enquiryList.sort((s1, s2) -> s1.getReply().compareToIgnoreCase(s2.getReply())); // sort by reply
 //		}
 //		for (Enquiries enquiry : enquiryList) {
-//			System.out.println(count++ + ". Name: " + enquiry.get() + " Status: " + application.getStatus());
+//			System.out.println(count++ + ". Enquiry: " + enquiry.getEnquiry() + enquiry.getReply() != null ? ("\nReply: " + enquiry.getReply()) : "");
 //		}
 //		return enquiryList; // for update status
+//	}
+	
+	// reply enquiry
+//	public void replyEnquiries(BTO bto) {
+//		List<Enquiries> enquiryList = this.viewEnquiries(bto, "unread");
+//		System.out.print("Select enquiry to reply: ");
+//		int option = sc.nextInt() - 1;
+//		System.out.print("Enter reply: ");
+//		String reply = sc.nextLine();
+//		enquiryList.get(option).setReply(reply, this.getId(), this.getRole());
 //	}
 	
 	// create BTO project
@@ -153,7 +163,7 @@ public class Manager extends Users {
 			BTO newBTO = new BTO(name, neighbourhood, num2Rooms, num3Rooms, applicationStart, applicationEnd, btoManager, maxOfficer, visible);
 			return newBTO;
 		} else {
-			System.out.println("This project clashes with another project");
+			System.out.println("This project timeline clashes with another project");
 			return null;
 		}
 	}

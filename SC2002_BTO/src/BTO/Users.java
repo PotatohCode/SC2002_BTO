@@ -35,6 +35,7 @@ public class Users {
 	public Users(String nric, String name, int age, String password, boolean married, String role) {
 		this.nric = nric;
 		this.name = name;
+		this.age = age;
 		this.password = password;
 		this.isMarried = married;
 		this.role = role;
@@ -115,6 +116,8 @@ public class Users {
 	}
 	
 	// functions
+	public void menu() {};
+	
 	/**
 	 * Check Password: check passowrd without need to return password from this class
 	 * @param input_password : password inputted from user

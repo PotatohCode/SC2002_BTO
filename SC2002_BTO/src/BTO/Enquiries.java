@@ -6,12 +6,13 @@ public class Enquiries implements Searchable {
 	private int btoId;
 	private static int idCounter = 0;
 	private int enquirierId;
-    private int replierId;
+    private int replierId = -1;
     private String enquiry;
     private String reply;
     
-    public Enquiries(String enquiry) {
+    public Enquiries(String enquiry, int btoId) {
     	this.enquiry = enquiry;
+    	this.btoId = btoId;
     	this.enquiryId = idCounter++;
     }
     
@@ -35,6 +36,10 @@ public class Enquiries implements Searchable {
     public int getRepierId() {
     	return this.replierId;
     }
+    
+    public int getBTOId() {
+    	return this.btoId;
+    }
 
     // setter
     public void setEnquiry(String enquiry) {
@@ -46,6 +51,14 @@ public class Enquiries implements Searchable {
     		this.reply = reply;	
     		this.replierId = id;
     	}
+    }
+    
+    // functions
+    public void printEnquiry() {
+    	System.out.println("Enquiry Id: " + this.enquirierId
+    						+ "\nEnquiry: " + this.enquiry
+    						+ (this.replierId > -1 ? "\nReply: " + this.reply : "")
+    						+ "\n");
     }
     
 	// search by id
