@@ -5,6 +5,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents a Build-To-Order (BTO) housing project within the BTO system.
+ * 
+ * Each BTO project contains information such as the project name, location,
+ * available room types (2-room and 3-room), application period, assigned manager,
+ * and a list of appointed officers. The project also supports access control,
+ * allowing only authorised managers and officers to perform updates.
+ * 
+ * BTOs are used as the main entities that applicants can apply to for housing,
+ * and officers can apply to manage.
+ * 
+ * Each project is assigned a unique auto-incremented ID.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
 public class BTO implements Search<Integer> {
 	
 	private int btoId;

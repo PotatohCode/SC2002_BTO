@@ -3,6 +3,19 @@ package BTO;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The main entry point for the BTO System application.
+ * 
+ * This class handles system initialization, including loading data from CSV files,
+ * managing user login, and directing users to their respective menu interfaces based on roles.
+ * 
+ * It acts as the controller that wires together user interactions, system behaviour, and project data.
+ * 
+ * 
+ * Constants are also defined for UI colour codes and file paths.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
 public class BTOApp {
 	//constants
 	public static final String applicantPath = "src/BTO/data/ApplicantList.csv";

@@ -2,6 +2,22 @@ package BTO;
 
 import java.util.List;
 
+
+/**
+ * Represents an enquiry submitted by a user regarding a BTO project.
+ * 
+ * Each enquiry contains a user-submitted question or concern, the user ID of the enquirer,
+ * and optionally a reply from an officer or manager. The enquiry is linked to a specific
+ * BTO project by ID, and can be edited or deleted by the enquirer.
+ * 
+ * Replies can only be submitted by users with the "officer" or "manager" role.
+ * 
+ * Each enquiry is uniquely identified by an auto-incremented enquiry ID.
+ * 
+ * This class supports printing formatted enquiry information for display purposes.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
 public class Enquiries implements Search<Integer> {
 	
 	private int enquiryId;

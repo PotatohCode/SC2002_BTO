@@ -6,6 +6,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Utility class for reading and parsing CSV data into in-memory project structures.
+ * 
+ * Provides static methods to populate user lists and BTO project lists from corresponding CSV files.
+ * 
+ * Supports parsing for:
+ * <ul>
+ *   <li>Applicants, Officers, and Managers</li>
+ *   <li>BTO projects with linked officers and manager assignments</li>
+ * </ul>
+ * 
+ * skips headers and validates referenced users.
+ * 
+ * This class does not store any internal state.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
 public class CsvParser {
 	//user csv header positions
 	private static final int nameIdx = 0, nricIdx = 1, ageIdx = 2, marriedIdx = 3, passwordIdx = 4;
