@@ -1,6 +1,7 @@
 package BTO;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,7 +13,7 @@ import java.util.Scanner;
  *  Applicant.java: generic class for all users
  * 
  */
-public class Applicant extends Users {
+public class Applicant extends Users implements Search {
 	
 	private int applicationId = -1;
 	private List<Integer> enquiriesId = new ArrayList<>();
@@ -148,4 +149,159 @@ public class Applicant extends Users {
 				+ (this.applicationId > -1 ? "\nApplication Id: " + this.applicationId : "")
 				+ (this.roomType > -1 ? "\nRoom Type: " + this.roomType + "-Room" : ""));
 	}
+	
+	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) {
+		boolean run = true;
+		while (run) {
+			try {
+				System.out.println(ANSI_CYAN + "Menu:" + ANSI_RESET);
+				System.out.println("1. View available BTOs");
+				System.out.println((this.getApplicationId() > -1 ? "2. Access application" : "2. Apply for BTO"));
+				System.out.println("3. Submit enquiry");
+				System.out.println("4. Access enquiries");
+				System.out.println("5. Logout");
+			
+				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+				int menuOption = sc.nextInt();
+				sc.nextLine(); // capture extra \n
+				System.out.println();
+				
+				switch (menuOption) {
+					case 1: 
+						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+						List<BTO> availBTO = this.getApplicableBTOs(btoProj.getItems());
+						if (availBTO.size() == 0) {
+							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
+							break;
+						}
+						printBTOs(availBTO);
+						break;
+						
+					case 2: 
+						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+						if (this.getApplicationId() == -1) { // create application
+							List<BTO> applyList = this.getApplicableBTOs(btoProj.getItems());
+							if (applyList.size() == 0) {
+								System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
+								break;
+							}
+							printBTOs(applyList);
+							
+							System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
+							int inpBTOId = sc.nextInt();
+							sc.nextLine();
+							BTO selectBTO = getBTOById(btoProj.getItems(),inpBTOId);
+							if (selectBTO == null) throw new InvalidInput("BTO"); // invalid capture
+							
+							int inpRT = 2;
+							if (this.getMarried()) {
+								System.out.print(ANSI_YELLOW + "Enter room type: " + ANSI_RESET);
+								inpRT = sc.nextInt();
+								sc.nextLine();
+								if (inpRT != 2 && inpRT != 3) throw new InvalidInput("room type"); // invalid capture
+							}
+							
+							Application application = this.createApplication(selectBTO, inpRT);
+							if (application != null) appProj.addItem(application);
+						} else { // access application
+							BTO appliedBTO = getBTOById(btoProj.getItems(), this.getBTOId());
+							appliedBTO.printBTO();
+							Application application = getAppById(appProj.getItems(), this.getApplicationId());
+							application.printApplication();
+							System.out.println();
+							if (application.getStatus().equals("successful") || application.getStatus().equals("booking")) {
+								System.out.println(ANSI_CYAN + "BTO Menu:" + ANSI_RESET);
+								System.out.println("1. Withdraw application");
+								if (application.getStatus().equals("successful")) {
+									System.out.println("2. Book flat with an officer");
+									System.out.println("3. Return to menu");
+								} else {
+									System.out.println("2. Return to menu");
+								}
+								System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+								int applicationMenu = sc.nextInt();
+								sc.nextLine();
+								
+								switch (applicationMenu) {
+									case 1:
+										this.withdrawApplication(application);
+										break;
+									case 2: 
+										if (!application.getStatus().equals("successful")) break;
+										this.bookBTO(application);
+										break;
+									case 3: if (!application.getStatus().equals("successful")) throw new InvalidInput("option");
+										break;
+									default: throw new InvalidInput("option");
+								}
+							}
+						}
+						break;
+						
+					case 3:
+						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+						List<BTO> btoList = this.getApplicableBTOs(btoProj.getItems());
+						if (this.getBTOId() > -1) getBTOById(btoProj.getItems(), this.getBTOId()).printBTO();
+						printBTOs(btoList);
+						System.out.println();
+						System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
+						int inpBTOId = sc.nextInt();
+						sc.nextLine();
+						BTO applyBTO = getBTOById(btoProj.getItems(), inpBTOId);
+						if (applyBTO == null) throw new InvalidInput("BTO"); // invalid capture
+						
+						System.out.print(ANSI_YELLOW + "Enter enquiry: " + ANSI_RESET);
+						String inpEnq = sc.nextLine();
+						if (inpEnq.length() <= 0) throw new InvalidInput("enquiry"); // invalid capture
+						enquiryProj.addItem(this.createEnquiries(inpEnq, inpBTOId));
+						break;
+						
+					case 4:
+						System.out.println(ANSI_CYAN + "===== Enquiries =====" + ANSI_RESET);
+						List<Enquiries> userEnquiry = getEnquiryByUser(enquiryProj.getItems(), this.getId());
+						if (userEnquiry.size() == 0) {
+							System.out.println(ANSI_RED + "No exisiting enquiry\n" + ANSI_RESET);
+							break;
+						}
+						printEnquiries(userEnquiry, btoProj.getItems());
+						
+						System.out.print(ANSI_YELLOW + "Enter enquiry id or -1 to return: " + ANSI_RESET);
+						int enquiryId = sc.nextInt();
+						sc.nextLine();
+						if (enquiryId == -1) break; 
+						Enquiries enquiry = getEnquiryById(enquiryProj.getItems(), enquiryId);
+						if (enquiry == null) throw new InvalidInput("enquiry"); // invalid capture
+						
+						System.out.println(ANSI_CYAN + "Enquiry Menu:" + ANSI_RESET);
+						System.out.println("1. Edit\n2. Delete\n3. Return to menu");
+						System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+						int enquiryMenu = sc.nextInt();
+						sc.nextLine();
+						switch(enquiryMenu) {
+							case 1:
+								System.out.print(ANSI_YELLOW + "Enter enquiry: " + ANSI_RESET);
+								String editEnq = sc.nextLine();
+								if (editEnq.length() <= 0) throw new InvalidInput("enquiry"); // invalid capture
+								this.editEnquiries(enquiry, editEnq);
+								break;
+							case 2:
+								this.deleteEnquiries(enquiryId);
+								enquiryProj.removeItem(enquiry);
+								break;
+							case 3:
+								break;
+							default: throw new InvalidInput("option");
+						}
+						break;
+					case 5: return;
+					default: throw new InvalidInput("option");
+				}
+			} catch (InputMismatchException ime) {
+				System.out.println("Invalid input!");
+			} catch (InvalidInput ii) {
+				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
+			}
+		}
+	}
+	
 }

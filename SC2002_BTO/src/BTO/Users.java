@@ -3,12 +3,9 @@ package BTO;
 import java.util.Objects;
 
 /**
- * 
+ *  Users.java: generic class for all users
  *  @author Kah Teck, Keanan, Javier, Junnoske, Kevin
  *  @version 16/4/25
- *  
- *  Users.java: generic class for all users
- * 
  */
 public class Users {
 	
@@ -16,6 +13,7 @@ public class Users {
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_CYAN = "\u001B[36m";
 	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
 	
 	private int userId;
 	private static int idCounter = 0;

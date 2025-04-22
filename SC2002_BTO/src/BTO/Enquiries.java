@@ -1,5 +1,7 @@
 package BTO;
 
+import java.util.List;
+
 public class Enquiries {
 	
 	private int enquiryId;
