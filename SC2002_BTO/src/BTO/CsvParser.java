@@ -105,9 +105,8 @@ public class CsvParser {
                         dateClose,
                         manager,
                         Integer.parseInt(value[officerSlotsIdx]),
-                        now.compareTo(dateOpen) <= 0
+                        (now.compareTo(dateOpen) > 0 && now.compareTo(dateClose) <= 0)
                 );
-
                 btoList.addItem(bto);
                 manager.addManagingBTO(bto.getId());
                 for (Officer o : officers) {
