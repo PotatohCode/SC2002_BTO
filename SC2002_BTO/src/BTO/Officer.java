@@ -105,13 +105,26 @@ public class Officer extends Applicant implements Admin {
 		System.out.println();
 	}
 	
+//	public void replyEnquiry(Project<Enquiries> enquiryProj) throws InvalidInput {
+//		System.out.print(ANSI_YELLOW + "Enter enquiry id: " + ANSI_RESET);
+//		int inpEnqId = sc.nextInt();
+//		sc.nextLine();
+//		Enquiries enquiry = enquiryProj.getEnquiryById(inpEnqId);
+//		enquiry.printEnquiry();
+//		if (enquiry.getReplierId() > -1) {
+//			System.out.println(ANSI_RED + "Enquiry already has a reply\n" + ANSI_RESET);
+//			return;
+//		}
+//		System.out.print(ANSI_YELLOW + "Enter reply: " + ANSI_RESET);
+//		String reply = sc.nextLine();
+//		if (reply.length() <= 0) throw new InvalidInput("reply");
+//		enquiry.setReply(reply, this.getId(), this.getRole());
+//	}
+	
 	@Override
 	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput {
 		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
-		List<BTO> btoList = btoProj.getItems();
-		List<Application> appList = appProj.getItems();
-		List<Enquiries> enqList = enquiryProj.getItems();
-		List<BTO> managingBTO = btoList.stream().filter(b -> managingId.contains(b.getId())).toList();
+		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
 		if (managingBTO.size() <= 0) {
 			System.out.println(ANSI_RED + "No managing BTOs\n" + ANSI_RESET);
 			return;
@@ -141,7 +154,7 @@ public class Officer extends Applicant implements Admin {
 				System.out.println(ANSI_RED + "No enquiries for this BTO\n" + ANSI_RESET);
 				return;
 			}
-			enquiryProj.printEnquiries(btoEnquiries, btoList);
+			enquiryProj.printEnquiries(btoEnquiries, btoProj.getItems());
 			
 			System.out.println("What would you like to do?\n"
 						+ "1. Reply enquiry\n"
@@ -151,20 +164,7 @@ public class Officer extends Applicant implements Admin {
 			sc.nextLine();
 			if (manageMenu2 == 2) return;
 			if (manageMenu2 < 1 && manageMenu > 2) throw new InvalidInput("option");
-			
-			System.out.print(ANSI_YELLOW + "Enter enquiry id: " + ANSI_RESET);
-			int inpEnqId = sc.nextInt();
-			sc.nextLine();
-			Enquiries enquiry = enquiryProj.getEnquiryById(inpEnqId);
-			enquiry.printEnquiry();
-			if (enquiry.getReplierId() > -1) {
-				System.out.println(ANSI_RED + "Enquiry already has a reply\n" + ANSI_RESET);
-				return;
-			}
-			System.out.print(ANSI_YELLOW + "Enter reply: " + ANSI_RESET);
-			String reply = sc.nextLine();
-			if (reply.length() <= 0) throw new InvalidInput("reply");
-			enquiry.setReply(reply, this.getId(), this.getRole());
+			replyEnquiry(this.getId(), this.getRole(), enquiryProj, sc);
 		} else if(manageMenu == 2 && this.getRole().equals("officer")) {
 			System.out.println(ANSI_CYAN + "===== Booking Applications =====" + ANSI_RESET);
 			List<Application> bookingApps = appProj.getAppByBTO(inpBTOId, "bto", "booking");
@@ -172,7 +172,7 @@ public class Officer extends Applicant implements Admin {
 				System.out.println(ANSI_RED + "No booking applications\n" + ANSI_RESET);
 				return;
 			}
-			btoProj.printBTOApp(bookingApps, btoList);
+			btoProj.printBTOApp(bookingApps, btoProj.getItems());
 			
 			System.out.print(ANSI_YELLOW + "Enter application id or -1 to return: " + ANSI_RESET);
 			int inpAppId = sc.nextInt();
@@ -250,7 +250,9 @@ public class Officer extends Applicant implements Admin {
 					case 5:
 						System.out.print(ANSI_YELLOW + "Enter applicant nric: " + ANSI_RESET);
 						String appNric = sc.nextLine();
-						Applicant applicant = appProj.getApplicantByNric(appNric);
+						Users u = appProj.getApplicantByNric(appNric);
+						Applicant applicant = null;
+						if (u.getRole() == "applicant") applicant = (Applicant) u;
 						if (applicant == null) throw new InvalidInput("applicant");
 						System.out.println(ANSI_CYAN + "===== Applicant Booking Receipt =====" + ANSI_RESET);
 						this.applicantReceipt(btoProj.getBTOById(applicant.getBTOId()), applicant);

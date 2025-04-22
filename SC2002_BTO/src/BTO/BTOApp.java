@@ -83,6 +83,9 @@ public class BTOApp {
 						Officer officer = (Officer) user;
 						officer.showMenu(btoProj, appProj, enquiryProj, userProj.getItems());
 					}
+				} else if (user.getRole().equals("manager")) {
+					Manager manager = (Manager) user;
+					manager.showMenu(btoProj, appProj, enquiryProj, userProj);
 				}
 			} else {
 				System.out.println(ANSI_RED + "End of program\n" + ANSI_RESET);

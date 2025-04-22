@@ -163,16 +163,46 @@ public class Manager extends Users implements Admin {
 //	}
 	
 	// create BTO project
-	public BTO createBTO(boolean clash, String name, String neighbourhood, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
-		if (!clash) {
-			Manager btoManager = manager == null ? this : manager; // if null : use current manager
-			BTO newBTO = new BTO(name, neighbourhood, num2Rooms, num3Rooms, applicationStart, applicationEnd, btoManager, maxOfficer, visible);
-			this.managingId.add(newBTO.getId());
+	public BTO createBTO(Project<Users> userProj, List<BTO> managingBTO) throws ParseException, InputMismatchException, InvalidInput  {
+			Date applicationStart, applicationEnd, now = new Date();
+			System.out.print("Enter BTO name: ");
+			String name = sc.nextLine();
+			System.out.print("Enter BTO neighbourhood: ");
+			String neighbourhood = sc.nextLine();
+			System.out.print("Enter number of 2 rooms: ");
+			int num2Rooms = sc.nextInt();
+			sc.nextLine();
+			System.out.print("Enter number of 3 rooms: ");
+			int num3Rooms = sc.nextInt();
+			sc.nextLine();
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+			
+			System.out.print("Enter application start date (dd/MM/yyyy): ");
+			String start = sc.nextLine();
+			applicationStart = formatter.parse(start);
+			
+			System.out.print("Enter application end date (dd/MM/yyyy): ");
+			String end = sc.nextLine();
+			applicationEnd = formatter.parse(end);
+				
+				
+	
+			System.out.print("Enter manager NRIC (leave blank if you are manager): ");
+			String managerNric = sc.nextLine();
+			
+			Users u = userProj.getApplicantByNric(managerNric);
+			Manager manager = null;
+			if (u.getRole() == "manager") manager = (Manager) u;
+			if (manager == null) throw new InvalidInput("manager");
+			
+			System.out.print("Enter max officers: ");
+			int maxOfficer = sc.nextInt();
+			sc.nextLine();
+			
+			BTO newBTO = new BTO(name, neighbourhood, num2Rooms, num3Rooms, applicationStart, applicationEnd, this, maxOfficer, (now.compareTo(applicationStart) > 0 && now.compareTo(applicationStart) <= 0));
 			return newBTO;
-		} else {
-			System.out.println("This project timeline clashes with another project");
-			return null;
-		}
+		
 	}
 	
 	// edit BTO project
@@ -245,14 +275,69 @@ public class Manager extends Users implements Admin {
 		this.managingId.remove(btoId); // need to remove at BTOApp
 	}
 	
-	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, List<Users> userList) {
+	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj) {
 		boolean run = true;
 		while (run) {
 			try {
 				System.out.println(ANSI_CYAN + "Menu:" + ANSI_RESET);
-				System.out.println("1. ")
+				System.out.println("1. View all BTO");
+				System.out.println("2. Access your BTO");
+				System.out.println("3. Create BTO");
+				System.out.println("4. View all applicant bookings");
+				System.out.println("5. Logout");
+				
+				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+				int menuOption = sc.nextInt();
+				sc.nextLine(); // capture extra \n
+				System.out.println();
+
+				switch(menuOption) {
+					case 1:
+						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+						List<BTO> allBTOs = btoProj.getItems();
+						if (allBTOs.size() <= 0) {
+							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
+							break;
+						}
+						btoProj.printBTOs(allBTOs, true);
+						break;
+					case 2:
+						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj);
+						break;
+						
+					case 3:
+						List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
+						BTO newBTO = createBTO(userProj, managingBTO);
+						if (!clashApplication(newBTO, managingBTO)) {
+							this.managingId.add(newBTO.getId());
+							btoProj.addItem(newBTO);
+						} else {
+							System.out.println(ANSI_RED + "This project timeline clashes with another project" + ANSI_RESET);
+						}
+						break;
+						
+					case 4:
+						List<Application> bookApp = new ArrayList<>();
+						for (int btoId : this.getManaging()) {
+							bookApp.addAll(appProj.getAppByBTO(btoId, "bto", "booked"));
+						}
+						for (Application app : bookApp) {
+							System.out.println("Project Name: " + appProj.getBTOById(app.getBTOId()).getName());
+							app.printApplication();
+							Applicant applicant = (Applicant) app.getApplicant();
+							applicant.printApplicant();
+							System.out.println();
+						}
+						break;
+						
+					case 5:
+						return;
+					default: throw new InvalidInput("option");
+				}
+			} catch (ParseException pe) {
+				System.out.println(ANSI_RED + "Date format is wrong" + ANSI_RESET);
 			} catch (InputMismatchException ime) {
-				System.out.println("Invalid input!");
+				System.out.println(ANSI_RED + "Invalid input!" + ANSI_RESET);
 			} catch (InvalidInput ii) {
 				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
 			}
@@ -260,9 +345,62 @@ public class Manager extends Users implements Admin {
 	}
 
 	@Override
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj,
-			Project<Enquiries> enquiryProj) throws InvalidInput {
-		// TODO Auto-generated method stub
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput {
+		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
+		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+		if (managingBTO.size() <= 0) {
+			System.out.println(ANSI_RED + "No managing BTO available\n" + ANSI_RESET);
+			return;
+		}
+		btoProj.printBTOs(managingBTO);
+		
+		System.out.println("What would you like to do?\n"
+							+ "1. Access enquries\n"
+							+ "2. Access applicant applications\n"
+							+ "3. Access officer applications"
+							+ "4. Toggle visibility\n"
+							+ "5. Edit BTO details\n"
+							+ "6. Delete BTO\n"
+							+ "7. Return to menu");
+		
+		System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+		int manageMenu = sc.nextInt();
+		sc.nextLine();
+		
+		if (manageMenu == 7) return;
+		if (manageMenu < 1 && manageMenu > 3) throw new InvalidInput("option");
+		
+		System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
+		int inpBTOId = sc.nextInt();
+		sc.nextLine();
+		if (!managingId.contains(inpBTOId)) throw new InvalidInput("BTO");
+		System.out.println();
+		
+		switch (manageMenu) {
+			case 1:
+				System.out.println(ANSI_CYAN + "===== Enquiries =====" + ANSI_RESET);
+				List<Enquiries> btoEnquiries = enquiryProj.getEnquiryByBTO(inpBTOId);
+				if (btoEnquiries.size() <= 0) {
+					System.out.println(ANSI_RED + "No enquiries for this BTO\n" + ANSI_RESET);
+					return;
+				}
+				enquiryProj.printEnquiries(btoEnquiries, btoProj.getItems());
+				
+				System.out.println("What would you like to do?\n"
+							+ "1. Reply enquiry\n"
+							+ "2. Return to menu");
+				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+				int manageMenu2 = sc.nextInt();
+				sc.nextLine();
+				if (manageMenu2 == 2) return;
+				if (manageMenu2 < 1 && manageMenu > 2) throw new InvalidInput("option");
+				replyEnquiry(this.getId(), this.getRole(), enquiryProj, sc);
+				break;
+				
+			case 2:
+				System.out.println(ANSI_CYAN + "===== Applicants =====" + ANSI_RESET);
+				break;
+		}
 		
 	}
 	

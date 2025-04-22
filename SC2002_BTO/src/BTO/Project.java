@@ -84,9 +84,9 @@ public class Project<T> {
 	}
 	
 	// get applicant by nric
-	public Applicant getApplicantByNric(String nric) {
+	public Users getApplicantByNric(String nric) {
 		List<Users> userList = (List<Users>) this.list;
-		return (Applicant) userList.stream()
+		return userList.stream()
 				.filter(a -> a.getNric().equals(nric))
 				.findFirst().orElse(null);
 	}
@@ -95,6 +95,13 @@ public class Project<T> {
 	public void printBTOs(List<BTO> btoList) {
 		for (BTO b : btoList) {
 			b.printBTO();
+			System.out.println();
+		}
+	}
+	
+	public void printBTOs(List<BTO> btoList, boolean manager) {
+		for (BTO b : btoList) {
+			b.printBTO(manager);
 			System.out.println();
 		}
 	}

@@ -191,6 +191,16 @@ public class BTO implements Search<Integer> {
 							"No. of 2 Rooms: " + this.num2Rooms + "\n" +
 							"No. of 3 Rooms: " + this.num3Rooms);
 	}
+	
+	public void printBTO(boolean manager) {
+		System.out.println("Project Id: " + this.btoId + "\n" + 
+							"Project Name: " + this.name + "\n" +
+							"Application Start: " + stringDate(this.applicationStart) + "\n" +
+							"Application End: " + stringDate(this.applicationEnd) + "\n" +
+							"No. of 2 Rooms: " + this.num2Rooms + "\n" +
+							"No. of 3 Rooms: " + this.num3Rooms + "\n" +
+							(manager ? "Visibility: " + (this.visible ? "Visible" : "Not Visible") : ""));
+	}
 
 	@Override
 	public boolean getById(Integer id) {
