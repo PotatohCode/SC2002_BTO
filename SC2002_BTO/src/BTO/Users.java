@@ -46,6 +46,11 @@ public class Users implements Search<String> {
 	private boolean isMarried;
 	private String filter = "alpha";
 	private String role;
+	private String filterNeighbourhood = "";
+	private int filterRoomType = -1; // -1 = any, 2 = 2-room only, 3 = 3-room only
+	private boolean filterOpenOnly = true;
+	private String filterProjectName = "";
+
 
 	/**
 	 * Constructor class
@@ -123,6 +128,22 @@ public class Users implements Search<String> {
 		return this.role;
 	}
 	
+	public String getFilterNeighbourhood() {
+	    return this.filterNeighbourhood;
+	}
+	
+	public int getFilterRoomType() {
+	    return this.filterRoomType;
+	}
+	
+	public boolean isFilterOpenOnly() {
+	    return this.filterOpenOnly;
+	}
+	
+	public String getFilterProjectName() {
+	    return this.filterProjectName;
+	}
+	
 	// setter
 	/**
 	 * Set Married
@@ -163,6 +184,22 @@ public class Users implements Search<String> {
 	 */
 	public void changePassword(String new_password) {
 		this.password = new_password;
+	}
+	
+	public void setFilterNeighbourhood(String filterNeighbourhood) {
+	    this.filterNeighbourhood = filterNeighbourhood;
+	}
+	
+	public void setFilterRoomType(int filterRoomType) {
+	    this.filterRoomType = filterRoomType;
+	}
+	
+	public void setFilterOpenOnly(boolean filterOpenOnly) {
+	    this.filterOpenOnly = filterOpenOnly;
+	}
+	
+	public void setFilterProjectName(String filterProjectName) {
+	    this.filterProjectName = filterProjectName;
 	}
 	
 	/**

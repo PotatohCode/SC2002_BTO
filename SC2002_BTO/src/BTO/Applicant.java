@@ -283,7 +283,9 @@ public class Applicant extends Users {
 				System.out.println((this.getApplicationId() > -1 ? "2. Access application" : "2. Apply for BTO"));
 				System.out.println("3. Submit enquiry");
 				System.out.println("4. Access enquiries");
-				System.out.println("5. Logout");
+				System.out.println("5. Change Search Filters");
+				System.out.println("6. Change Password");
+				System.out.println("7. Logout");
 			
 				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 				int menuOption = sc.nextInt();
@@ -293,7 +295,9 @@ public class Applicant extends Users {
 				switch (menuOption) {
 					case 1: 
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
-						List<BTO> availBTO = this.getApplicableBTOs(btoProj.getItems());
+						List<BTO> availBTO = FilterUtil.applyUserFilters(this.getApplicableBTOs(btoProj.getItems()), this);
+
+						
 						if (availBTO.size() == 0) {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
@@ -305,6 +309,7 @@ public class Applicant extends Users {
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						if (this.getApplicationId() == -1) { // create application
 							List<BTO> applyList = this.getApplicableBTOs(btoProj.getItems());
+							applyList = FilterUtil.applyUserFilters(applyList, this);
 							if (applyList.size() == 0) {
 								System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 								break;
@@ -417,7 +422,36 @@ public class Applicant extends Users {
 							default: throw new InvalidInput("option");
 						}
 						break;
-					case 5: return;
+					case 5:
+					    System.out.print("Enter neighbourhood keyword (leave blank to skip): ");
+					    this.setFilterNeighbourhood(sc.nextLine());
+
+					    System.out.print("Filter by room type? (2/3/-1 for any): ");
+					    this.setFilterRoomType(sc.nextInt());
+					    sc.nextLine();
+
+					    System.out.print("Only show open applications? (true/false): ");
+					    this.setFilterOpenOnly(sc.nextBoolean());
+					    sc.nextLine();
+
+					    System.out.print("Project name contains (leave blank to skip): ");
+					    this.setFilterProjectName(sc.nextLine());
+
+					    System.out.println(ANSI_GREEN + "Filters updated!" + ANSI_RESET);
+					    break;
+					case 6:
+					    System.out.print(ANSI_YELLOW + "Enter new password: " + ANSI_RESET);
+					    String newPwd = sc.nextLine();
+
+					    if (newPwd.trim().isEmpty()) {
+					        System.out.println(ANSI_RED + "Password cannot be empty.\n" + ANSI_RESET);
+					        break;
+					    }
+
+					    this.changePassword(newPwd);
+					    System.out.println(ANSI_GREEN + "Password changed successfully!\n" + ANSI_RESET);
+					    break;
+					case 7: return;
 					default: throw new InvalidInput("option");
 				}
 			} catch (InputMismatchException ime) {

@@ -221,7 +221,8 @@ public class Officer extends Applicant implements Admin {
 				System.out.println("3. Access officer applications");
 				System.out.println("4. Access officiating BTOs");
 				System.out.println("5. Generate booking receipt");
-				System.out.println("6. Logout");
+				System.out.println("6. Change Search Filters");
+				System.out.println("7. Logout");
 			
 				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 				int menuOption = sc.nextInt();
@@ -235,6 +236,7 @@ public class Officer extends Applicant implements Admin {
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						List<BTO> availBTO = btoProj.getItems().stream()
 												.filter(b -> this.canApplyOfficer(b, clashApplication(b, managingBTO))).toList();
+						availBTO = FilterUtil.applyUserFilters(availBTO, this);
 						if (availBTO.size() <= 0) {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
@@ -245,6 +247,7 @@ public class Officer extends Applicant implements Admin {
 					case 2:
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						List<BTO> applyBTO = btoProj.getItems().stream().filter(b -> this.canApplyOfficer(b, clashApplication(b, managingBTO))).toList();
+						applyBTO = FilterUtil.applyUserFilters(applyBTO, this);
 						if (applyBTO.size() == 0) {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
@@ -281,7 +284,36 @@ public class Officer extends Applicant implements Admin {
 						System.out.println(ANSI_CYAN + "===== Applicant Booking Receipt =====" + ANSI_RESET);
 						this.applicantReceipt(btoProj.getBTOById(applicant.getBTOId()), applicant);
 						break;
-					case 6: return;
+					case 6:
+						System.out.print("Enter neighbourhood keyword (leave blank to skip): ");
+					    this.setFilterNeighbourhood(sc.nextLine());
+
+					    System.out.print("Filter by room type? (2/3/-1 for any): ");
+					    this.setFilterRoomType(sc.nextInt());
+					    sc.nextLine();
+
+					    System.out.print("Only show open applications? (true/false): ");
+					    this.setFilterOpenOnly(sc.nextBoolean());
+					    sc.nextLine();
+
+					    System.out.print("Project name contains (leave blank to skip): ");
+					    this.setFilterProjectName(sc.nextLine());
+
+					    System.out.println(ANSI_GREEN + "Filters updated!" + ANSI_RESET);
+					    break;
+					case 7:
+					    System.out.print(ANSI_YELLOW + "Enter new password: " + ANSI_RESET);
+					    String newPwd = sc.nextLine();
+
+					    if (newPwd.trim().isEmpty()) {
+					        System.out.println(ANSI_RED + "Password cannot be empty.\n" + ANSI_RESET);
+					        break;
+					    }
+
+					    this.changePassword(newPwd);
+					    System.out.println(ANSI_GREEN + "Password changed successfully!\n" + ANSI_RESET);
+					    break;
+					case 8: return;
 					default: throw new InvalidInput("option");
 				}
 			} catch (InputMismatchException ime) {

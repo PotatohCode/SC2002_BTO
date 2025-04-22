@@ -250,7 +250,7 @@ public class Manager extends Users implements Admin {
 		while (run) {
 			try {
 				System.out.println(ANSI_CYAN + "Menu:" + ANSI_RESET);
-				System.out.println("1. ")
+				System.out.println("1. ");
 			} catch (InputMismatchException ime) {
 				System.out.println("Invalid input!");
 			} catch (InvalidInput ii) {
