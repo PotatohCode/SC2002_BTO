@@ -6,6 +6,32 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+
+/**
+ * Represents a user with officer-level permissions in the BTO system.
+ * 
+ * Officers are specialised users who inherit from {@link Applicant} and
+ * are authorised to manage BTO applications, reply to enquiries,
+ * book flats on behalf of applicants, and access booking and enquiry workflows.
+ * 
+ * Officers can:
+ * <ul>
+ *   <li>Apply to become BTO officers</li>
+ *   <li>Be appointed as managing officers</li>
+ *   <li>Facilitate the booking process</li>
+ *   <li>View and respond to user enquiries</li>
+ * </ul>
+ * 
+ * Officers are assigned to projects dynamically, and also interact with
+ * other users through the shared BTO interface.
+ * 
+ * Implements {@link Search} and {@link Admin} interfaces.
+ * 
+ * Authorised operations depend on role and project assignment.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
+
 public class Officer extends Applicant implements Admin {
 	
 	private List<Integer> managingId = new ArrayList<>();

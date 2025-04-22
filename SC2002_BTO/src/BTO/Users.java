@@ -3,10 +3,32 @@ package BTO;
 import java.util.Objects;
 
 /**
- *  Users.java: generic class for all users
- *  @author Kah Teck, Keanan, Javier, Junnoske, Kevin
- *  @version 16/4/25
+ * A base class representing all users in the BTO system.
+ * 
+ * This class encapsulates common user data such as NRIC, name, age, marital status,
+ * and role, along with methods for password checking and searching by NRIC.
+ * 
+ * It serves as the parent class for role-specific user types such as:
+ * <ul>
+ *   <li>{@link Applicant}</li>
+ *   <li>{@link Officer}</li>
+ *   <li>{@link Manager}</li>
+ * </ul>
+ * 
+ * Each user is automatically assigned a unique ID.
+ * The class also supports ANSI formatting constants for coloured console output.
+ * 
+ * @see Applicant
+ * @see Officer
+ * @see Manager
+ * 
+ * This class is intended to be extended rather than used directly.
+ * 
+ * 
+ * @version 16/4/25
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
  */
+
 public class Users implements Search<String> {
 	
 	public static final String ANSI_RESET = "\u001B[0m";
@@ -122,8 +144,8 @@ public class Users implements Search<String> {
 	public void menu() {};
 	
 	/**
-	 * Check Password: check passowrd without need to return password from this class
-	 * @param input_password : password inputted from user
+	 * Check Password: check password without need to return password from this class
+	 * @param input_password : password input from user
 	 * @return boolean valid : whether password is valid
 	 */
 	public boolean checkPassword(String input_password) {
@@ -132,6 +154,15 @@ public class Users implements Search<String> {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Updates the user's password to a new value.
+	 * 
+	 * @param new_password the new password to be set
+	 */
+	public void changePassword(String new_password) {
+		this.password = new_password;
 	}
 	
 	/**

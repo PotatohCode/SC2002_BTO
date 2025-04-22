@@ -6,13 +6,24 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
+ * Represents an applicant in the BTO system. 
+ * This class extends {@link Users} and implements {@link Search}, providing logic for applying to BTO projects,
+ * handling application workflows, and managing personal enquiries.
  * 
- *  @author Kah Teck, Keanan, Javier, Junnoske, Kevin
- *  @version 16/4/25
- *  
- *  Applicant.java: generic class for all users
+ * An applicant can:
+ * <ul>
+ *     <li>Apply for a BTO project (based on eligibility)</li>
+ *     <li>Withdraw or book BTO units</li>
+ *     <li>Create, edit, or delete enquiries</li>
+ *     <li>Interact with the system through a user menu</li>
+ * </ul>
  * 
+ * Fields include application ID, linked BTO ID, room type, and a list of submitted enquiries.
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ * @version 16/4/25
  */
+
 public class Applicant extends Users {
 	
 	private int applicationId = -1;
@@ -21,33 +32,79 @@ public class Applicant extends Users {
 	private int roomType = -1;
 	
 	private Scanner sc = new Scanner(System.in);
-
+	
+	/**
+	 * Constructs an Applicant object with default role set to "applicant".
+	 *
+	 * @param nric the NRIC of the applicant
+	 * @param name the name of the applicant
+	 * @param age the age of the applicant
+	 * @param password the login password
+	 * @param married the marital status of the applicant
+	 */
 	public Applicant(String nric, String name, int age, String password, boolean married) {
 		super(nric, name, age, password, married, "applicant");
 	}
 	
+	/**
+	 * Constructs an Applicant object with a specified user role (e.g., officer).
+	 *
+	 * @param nric the NRIC of the user
+	 * @param name the name of the user
+	 * @param age the age of the user
+	 * @param password the login password
+	 * @param married the marital status
+	 * @param role the role to assign to this user (e.g., "applicant", "officer")
+	 */
 	public Applicant(String nric, String name, int age, String password, boolean married, String role) {
 		super(nric, name, age, password, married, role);
 	}
 	
 	// getters
+	
+	/**
+	 * Returns the application ID associated with this applicant.
+	 * @return the application ID, or -1 if none exists
+	 */
 	public int getApplicationId() {
 		return this.applicationId;
 	}
 	
+	/**
+	 * Returns a list of enquiry IDs submitted by the applicant.
+	 * @return list of enquiry IDs
+	 */
 	public List<Integer> getEnquiriesId() {
 		return this.enquiriesId;
 	}
 	
+	/**
+	 * Returns the BTO project ID associated with the applicant.
+	 * @return the BTO project ID, or -1 if none exists
+	 */
 	public int getBTOId() {
 		return this.btoId;
 	}
 	
+
+	/**
+	 * Returns the room type selected in the application.
+	 * @return the room type (2 or 3), or -1 if not set
+	 */
 	public int getRoomType() {
 		return this.roomType;
 	}
 	
 	// setter
+	
+	/**
+	 * Sets the room type for the applicant, if validated by the role and NRIC.
+	 * Used by officers to update applicant profile after successful booking.
+	 *
+	 * @param roomType the new room type to assign
+	 * @param nric the NRIC used for validation
+	 * @param role the role of the user attempting to make the change
+	 */
 	public void setRoomType(int roomType, String nric, String role) {
 		if (role.equals("officer") && nric.equals(this.nric)) {
 			this.roomType = roomType;
@@ -55,12 +112,24 @@ public class Applicant extends Users {
 	}
 	
 	// functions
-	// viewing bto
+	/**
+	 * Returns a list of BTO projects this applicant is eligible to apply for.
+	 * Eligibility depends on marital status, age, and room availability.
+	 *
+	 * @param btoList the list of all BTO projects
+	 * @return a filtered list of applicable BTOs
+	 */
 	public List<BTO> getApplicableBTOs(List<BTO> btoList) {
 		return btoList.stream().filter(b -> canApplyBTO(b, (this.getMarried() ? -1 : 2))).toList();
 	}
 	
-	// check qualification
+	/**
+	 * Checks if the applicant meets criteria to apply for a specific BTO and room type.
+	 *
+	 * @param bto the BTO project to check
+	 * @param roomType the room type requested (2 or 3)
+	 * @return true if eligible, false otherwise
+	 */
 	public boolean canApplyBTO(BTO bto, int roomType) {
 		boolean can = false;
 		// check user qualification
@@ -86,6 +155,15 @@ public class Applicant extends Users {
 	}
 	
 	// application functions
+	
+	/**
+	 * Creates a new BTO application for this applicant, if eligible.
+	 * Updates internal state with application ID and BTO ID.
+	 *
+	 * @param bto the BTO project to apply for
+	 * @param roomType the room type requested
+	 * @return the Application object created, or null if ineligible
+	 */
 	public Application createApplication(BTO bto, int roomType) {
 		if (canApplyBTO(bto, roomType)) {
 			Application apply = new Application(this, bto.getId(), roomType);
@@ -99,6 +177,12 @@ public class Applicant extends Users {
 		}
 	}
 	
+	/**
+	 * Requests to withdraw a successful or booked application.
+	 * Only allowed if the current application ID matches and role is correct.
+	 *
+	 * @param application the application to withdraw
+	 */
 	public void withdrawApplication(Application application) {
 		if (application.getId() == this.applicationId 
 				&& application.getApplicant().getId() == this.getId() 
@@ -110,6 +194,12 @@ public class Applicant extends Users {
 		}
 	}
 	
+	/**
+	 * Requests to proceed with booking a unit for a successful application.
+	 * Only allowed if current application is in "successful" state.
+	 *
+	 * @param application the application to confirm booking for
+	 */
 	public void bookBTO(Application application) {
 		if (application.getId() == this.applicationId 
 				&& application.getApplicant().getId() == this.getId() 
@@ -122,6 +212,15 @@ public class Applicant extends Users {
 	}
 	
 	// enquiry function
+	
+	/**
+	 * Creates a new enquiry related to a BTO project.
+	 * The enquiry ID is stored internally for future reference.
+	 *
+	 * @param inpEnquiry the enquiry text
+	 * @param btoId the BTO project this enquiry is related to
+	 * @return the Enquiries object created
+	 */
 	public Enquiries createEnquiries(String inpEnquiry, int btoId) {
 		Enquiries enquiry = new Enquiries(inpEnquiry, this.getId(), btoId);
 		this.enquiriesId.add(enquiry.getId());
@@ -129,6 +228,13 @@ public class Applicant extends Users {
 		return enquiry;
 	}
 	
+	/**
+	 * Edits an existing enquiry submitted by the applicant.
+	 * Only editable if the enquiry belongs to the applicant.
+	 *
+	 * @param enquiry the enquiry object to edit
+	 * @param inpEnquiry the new enquiry content
+	 */
 	public void editEnquiries(Enquiries enquiry, String inpEnquiry) {
 		if (this.enquiriesId.contains(enquiry.getId()) && enquiry.getEnquirierId() == this.getId()) {
 			enquiry.setEnquiry(inpEnquiry);
@@ -136,11 +242,21 @@ public class Applicant extends Users {
 		}
 	}
 	
+	/**
+	 * Deletes an enquiry by ID if it belongs to the applicant.
+	 * Removes the ID from internal tracking.
+	 *
+	 * @param enquiryId the ID of the enquiry to delete
+	 */
 	public void deleteEnquiries(int enquiryId) {
 		this.enquiriesId.remove(enquiryId);
 		System.out.println(ANSI_GREEN + "Enquiry deleted!\n" + ANSI_RESET);
 	}
-
+	
+	/**
+	 * Prints applicant information including name, NRIC, age,
+	 * marital status, and application details (if available).
+	 */
 	public void printApplicant() {
 		System.out.println("Applicant: " + this.getName() + "\n"
 				+ "NRIC: " + this.getNric() + "\n"
@@ -150,6 +266,14 @@ public class Applicant extends Users {
 				+ (this.roomType > -1 ? "\nRoom Type: " + this.roomType + "-Room" : ""));
 	}
 	
+	/**
+	 * Displays the applicant menu and handles user interaction for:
+	 * viewing BTOs, applying, checking applications, and managing enquiries.
+	 *
+	 * @param btoProj the project containing all BTOs
+	 * @param appProj the project containing all applications
+	 * @param enquiryProj the project containing all enquiries
+	 */
 	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) {
 		boolean run = true;
 		while (run) {

@@ -3,6 +3,19 @@ package BTO;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A generic container class that manages collections of entities within the BTO system.
+ * 
+ * This class acts as a lightweight project-level storage for any type of item, 
+ * such as Users, Applications, Enquiries, or BTOs. It supports basic operations including:
+ * adding items, removing items, and retrieving the full list.
+ * 
+ * It is used throughout the system to hold user lists, project data, and other core records.
+ * 
+ * @param <T> the type of item this project manages
+ * 
+ * @author Kah Teck, Keanan, Javier, Junnoske, Kevin
+ */
 public class Project<T> {
 	// declare
 	private List<T> list;
