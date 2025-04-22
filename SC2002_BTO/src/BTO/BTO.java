@@ -93,6 +93,10 @@ public class BTO implements Search<Integer> {
 		return this.visible;
 	}
 	
+	public List<Officer> getOfficers() {
+		return this.officerList;
+	}
+	
 	// setter
 	public void setName(String name, int id) {
 		if (this.authManager(id)) {
@@ -178,6 +182,16 @@ public class BTO implements Search<Integer> {
 	public void reduceNum3Rooms(int id) {
 		if (this.authManager(id) || this.authOfficer(id)) {
 			this.num3Rooms--;
+		}
+	}
+	
+	public void addOfficer(Officer o) {
+		this.officerList.add(o);
+	}
+	
+	public void toggleVisible(int id) {
+		if (this.authManager(id)) {
+			this.visible = !this.visible;
 		}
 	}
 	

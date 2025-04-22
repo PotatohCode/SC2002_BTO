@@ -143,6 +143,7 @@ public class Application implements Search<Integer> {
 	public void printApplication() {
 		System.out.println("Application Id: " + this.applicationId 
 							+ "\nStatus: " + this.status
+							+ "\nApplicant Details: " + this.applicant.getName() + " (Age: " + this.applicant.getAge() + ") " + (this.applicant.getMarried() ? "Married" : "Single") 
 							+ (this.type.equals("bto") ? "\nRoom Type: "  + this.roomType : ""));
 	}
 	

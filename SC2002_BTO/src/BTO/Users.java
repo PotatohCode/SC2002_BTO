@@ -162,7 +162,6 @@ public class Users implements Search<String> {
 	}
 	
 	// functions
-	public void menu() {};
 	
 	/**
 	 * Check Password: check password without need to return password from this class

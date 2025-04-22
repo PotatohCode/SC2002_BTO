@@ -1,5 +1,6 @@
 package BTO;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.InputMismatchException;
@@ -148,7 +149,7 @@ public class Officer extends Applicant implements Admin {
 //	}
 	
 	@Override
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput {
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InputMismatchException, InvalidInput {
 		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
 		if (managingBTO.size() <= 0) {
@@ -171,6 +172,8 @@ public class Officer extends Applicant implements Admin {
 		int inpBTOId = sc.nextInt();
 		sc.nextLine();
 		if (!managingId.contains(inpBTOId)) throw new InvalidInput("BTO");
+		BTO bto = btoProj.getBTOById(inpBTOId);
+		if (bto == null) throw new InvalidInput("BTO");
 		System.out.println();
 		
 		if (manageMenu == 1) {
@@ -204,7 +207,6 @@ public class Officer extends Applicant implements Admin {
 			int inpAppId = sc.nextInt();
 			sc.nextLine();
 			if (inpAppId == -1) return;
-			BTO bto = btoProj.getBTOById(inpBTOId);
 			Application bookingApp = appProj.getAppById(inpAppId);
 			if (bookingApp == null) throw new InvalidInput("application");
 			this.bookBTO(bto, bookingApp);

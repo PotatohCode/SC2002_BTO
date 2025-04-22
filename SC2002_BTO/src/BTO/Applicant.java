@@ -186,12 +186,17 @@ public class Applicant extends Users {
 	public void withdrawApplication(Application application) {
 		if (application.getId() == this.applicationId 
 				&& application.getApplicant().getId() == this.getId() 
-				&& (application.getStatus() == "successful" || application.getStatus() == "booked")) {
+				&& (application.getStatus().equals("successful") || application.getStatus().equals("booked") ||application.getStatus().equals("booking") )) {
 			application.setStatus("withdraw", this.getRole());
 			System.out.println(ANSI_GREEN + "Withdrawal submitted!\n" + ANSI_RESET);
 		} else {
 			System.out.println(ANSI_RED + "Unable to withdraw\n" + ANSI_RESET);
 		}
+	}
+	
+	public void withdraw() {
+		this.btoId = -1;
+		this.applicationId = -1;
 	}
 	
 	/**
@@ -296,7 +301,6 @@ public class Applicant extends Users {
 					case 1: 
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						List<BTO> availBTO = FilterUtil.applyUserFilters(this.getApplicableBTOs(btoProj.getItems()), this);
-
 						
 						if (availBTO.size() == 0) {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);

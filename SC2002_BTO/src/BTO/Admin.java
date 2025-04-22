@@ -1,5 +1,7 @@
 package BTO;
 
+import java.text.ParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,7 +17,7 @@ public interface Admin {
 		return false;
 	}
 	
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput;
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj)  throws InputMismatchException, InvalidInput;
 	
 	default void replyEnquiry(int enquiryId, String role, Project<Enquiries> enquiryProj, Scanner sc) throws InvalidInput {
 		System.out.print(Users.ANSI_YELLOW + "Enter enquiry id: " + Users.ANSI_RESET);

@@ -52,6 +52,13 @@ public class Project<T> {
 				.findFirst().orElse(null);
 	}
 	
+	public BTO getBTOById(List<BTO> btoList, int id) {
+		return btoList.stream()
+				.filter(b -> b.getById(id))
+				.findFirst().orElse(null);
+	}
+	
+	
 	// get enquiries by id
 	public Enquiries getEnquiryById(int id) {
 		List<Enquiries> enqList = (List<Enquiries>) this.list;
@@ -131,7 +138,7 @@ public class Project<T> {
 	// print given application list with bto name
 	public void printBTOApp(List<Application> appList, List<BTO> btoList) {
 		for (Application a : appList) {
-			System.out.println("Project Name: " + getBTOById(a.getBTOId()).getName());
+			System.out.println("Project Name: " + getBTOById(btoList, a.getBTOId()).getName());
 			a.printApplication();
 			System.out.println();
 		}
