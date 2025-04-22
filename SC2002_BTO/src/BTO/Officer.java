@@ -6,7 +6,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class Officer extends Applicant implements Search, Admin {
+public class Officer extends Applicant implements Admin {
 	
 	private List<Integer> managingId = new ArrayList<>();
 	private List<Integer> officerAppId = new ArrayList<>();
@@ -61,31 +61,6 @@ public class Officer extends Applicant implements Search, Admin {
 		return false;
 	}
 	
-	// view all enquiries
-//	public List<Enquiries> viewEnquiries(BTO bto, String filter) {
-//		int count = 1;
-//		List<Enquiries> enquiryList = bto.getEnquiries();
-//		if (filter == "unread") {
-//			enquiryList = enquiryList.stream().filter(e -> e.getReply() == null).toList();
-//		} else {
-//			enquiryList.sort((s1, s2) -> s1.getReply().compareToIgnoreCase(s2.getReply())); // sort by reply
-//		}
-//		for (Enquiries enquiry : enquiryList) {
-//			System.out.println(count++ + ". Enquiry: " + enquiry.getEnquiry() + enquiry.getReply() != null ? ("\nReply: " + enquiry.getReply()) : "");
-//		}
-//		return enquiryList; // for update status
-//	}
-	
-	// reply enquiry
-//	public void replyEnquiries(BTO bto) {
-//		List<Enquiries> enquiryList = this.viewEnquiries(bto, "unread");
-//		System.out.print("Select enquiry to reply: ");
-//		int option = sc.nextInt() - 1;
-//		System.out.print("Enter reply: ");
-//		String reply = sc.nextLine();
-//		enquiryList.get(option).setReply(reply, this.getId(), this.getRole());
-//	}
-	
 	// book room
 	public String bookBTO(BTO bto, Application application) {
 		if (application.getStatus() == "booking" && this.managingId.contains(bto.getId())) {
@@ -131,77 +106,80 @@ public class Officer extends Applicant implements Search, Admin {
 	}
 	
 	@Override
-	public void managingBTO(List<Integer> managingId, List<BTO> btoList, List<Enquiries> enquiryList, List<Application> appList) throws InvalidInput {
-		System.out.println(Users.ANSI_CYAN + "===== BTOs =====" + Users.ANSI_RESET);
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput {
+		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
+		List<BTO> btoList = btoProj.getItems();
+		List<Application> appList = appProj.getItems();
+		List<Enquiries> enqList = enquiryProj.getItems();
 		List<BTO> managingBTO = btoList.stream().filter(b -> managingId.contains(b.getId())).toList();
 		if (managingBTO.size() <= 0) {
-			System.out.println(Users.ANSI_RED + "No managing BTOs\n" + Users.ANSI_RESET);
+			System.out.println(ANSI_RED + "No managing BTOs\n" + ANSI_RESET);
 			return;
 		}
-		printBTOs(managingBTO);
+		btoProj.printBTOs(managingBTO);
 		
 		System.out.println("What would you like to do?\n"
 						+ "1. Access enquries\n"
 						+ "2. Accept booking requests\n"
 						+ "3. Return to menu");
-		System.out.print(Users.ANSI_YELLOW + "Enter option: " + Users.ANSI_RESET);
+		System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 		int manageMenu = sc.nextInt();
 		sc.nextLine();
 		if (manageMenu == 3) return;
 		if (manageMenu < 1 && manageMenu > 3) throw new InvalidInput("option");
 		
-		System.out.print(Users.ANSI_YELLOW + "Enter BTO id: " + Users.ANSI_RESET);
+		System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
 		int inpBTOId = sc.nextInt();
 		sc.nextLine();
 		if (!managingId.contains(inpBTOId)) throw new InvalidInput("BTO");
 		System.out.println();
 		
 		if (manageMenu == 1) {
-			System.out.println(Users.ANSI_CYAN + "===== Enquiries =====" + Users.ANSI_RESET);
-			List<Enquiries> btoEnquiries = getEnquiryByBTO(enquiryList, inpBTOId);
+			System.out.println(ANSI_CYAN + "===== Enquiries =====" + ANSI_RESET);
+			List<Enquiries> btoEnquiries = enquiryProj.getEnquiryByBTO(inpBTOId);
 			if (btoEnquiries.size() <= 0) {
-				System.out.println(Users.ANSI_RED + "No enquiries for this BTO\n" + Users.ANSI_RESET);
+				System.out.println(ANSI_RED + "No enquiries for this BTO\n" + ANSI_RESET);
 				return;
 			}
-			printEnquiries(btoEnquiries, btoList);
+			enquiryProj.printEnquiries(btoEnquiries, btoList);
 			
 			System.out.println("What would you like to do?\n"
 						+ "1. Reply enquiry\n"
 						+ "2. Return to menu");
-			System.out.print(Users.ANSI_YELLOW + "Enter option: " + Users.ANSI_RESET);
+			System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 			int manageMenu2 = sc.nextInt();
 			sc.nextLine();
 			if (manageMenu2 == 2) return;
 			if (manageMenu2 < 1 && manageMenu > 2) throw new InvalidInput("option");
 			
-			System.out.print(Users.ANSI_YELLOW + "Enter enquiry id: " + Users.ANSI_RESET);
+			System.out.print(ANSI_YELLOW + "Enter enquiry id: " + ANSI_RESET);
 			int inpEnqId = sc.nextInt();
 			sc.nextLine();
-			Enquiries enquiry = getEnquiryById(enquiryList, inpEnqId);
+			Enquiries enquiry = enquiryProj.getEnquiryById(inpEnqId);
 			enquiry.printEnquiry();
 			if (enquiry.getReplierId() > -1) {
-				System.out.println(Users.ANSI_RED + "Enquiry already has a reply\n" + Users.ANSI_RESET);
+				System.out.println(ANSI_RED + "Enquiry already has a reply\n" + ANSI_RESET);
 				return;
 			}
-			System.out.print(Users.ANSI_YELLOW + "Enter reply: " + Users.ANSI_RESET);
+			System.out.print(ANSI_YELLOW + "Enter reply: " + ANSI_RESET);
 			String reply = sc.nextLine();
 			if (reply.length() <= 0) throw new InvalidInput("reply");
 			enquiry.setReply(reply, this.getId(), this.getRole());
 		} else if(manageMenu == 2 && this.getRole().equals("officer")) {
-			System.out.println(Users.ANSI_CYAN + "===== Booking Applications =====" + Users.ANSI_RESET);
-			List<Application> bookingApps = getAppByBTO(appList, inpBTOId, "bto", "booking");
+			System.out.println(ANSI_CYAN + "===== Booking Applications =====" + ANSI_RESET);
+			List<Application> bookingApps = appProj.getAppByBTO(inpBTOId, "bto", "booking");
 			if (bookingApps.size() <= 0) {
-				System.out.println(Users.ANSI_RED + "No booking applications\n" + Users.ANSI_RESET);
+				System.out.println(ANSI_RED + "No booking applications\n" + ANSI_RESET);
 				return;
 			}
-			printBTOApp(bookingApps, btoList);
+			btoProj.printBTOApp(bookingApps, btoList);
 			
-			System.out.print(Users.ANSI_YELLOW + "Enter application id or -1 to return: " + Users.ANSI_RESET);
+			System.out.print(ANSI_YELLOW + "Enter application id or -1 to return: " + ANSI_RESET);
 			int inpAppId = sc.nextInt();
 			sc.nextLine();
 			if (inpAppId == -1) return;
-			BTO bto = getBTOById(btoList, inpBTOId);
-			Application bookingApp = getAppById(appList, inpAppId);
+			BTO bto = btoProj.getBTOById(inpBTOId);
+			Application bookingApp = appProj.getAppById(inpAppId);
 			if (bookingApp == null) throw new InvalidInput("application");
 			this.bookBTO(bto, bookingApp);
 		}
@@ -235,7 +213,7 @@ public class Officer extends Applicant implements Search, Admin {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
 						}
-						printBTOs(availBTO);
+						btoProj.printBTOs(availBTO);
 						break;
 						
 					case 2:
@@ -245,12 +223,12 @@ public class Officer extends Applicant implements Search, Admin {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
 						}
-						printBTOs(applyBTO);
+						btoProj.printBTOs(applyBTO);
 						
 						System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
 						int inpBTOId = sc.nextInt();
 						sc.nextLine();
-						BTO selectBTO = getBTOById(btoProj.getItems(), inpBTOId);
+						BTO selectBTO = btoProj.getBTOById(inpBTOId);
 						if (selectBTO == null) throw new InvalidInput("BTO"); // invalid capture
 						
 						Application application = this.createOfficerApplication(selectBTO, clashApplication(selectBTO, managingBTO));
@@ -259,23 +237,23 @@ public class Officer extends Applicant implements Search, Admin {
 					
 					case 3:
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
-						List<Application> officerAppList = getAppByUser(appProj.getItems(), this.getId(), "officer");
+						List<Application> officerAppList = appProj.getAppByUser(this.getId(), "officer");
 						if (officerAppList.size() <= 0) {
 							System.out.println(ANSI_RED + "No applications\n" + ANSI_RESET);
 						}
-						printBTOApp(officerAppList, btoProj.getItems());
+						appProj.printBTOApp(officerAppList, btoProj.getItems());
 						break;
 						
 					case 4:
-						managingBTO(this.getManaging(), btoProj.getItems(), enquiryProj.getItems(), appProj.getItems());
+						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj);
 						break;
 					case 5:
 						System.out.print(ANSI_YELLOW + "Enter applicant nric: " + ANSI_RESET);
 						String appNric = sc.nextLine();
-						Applicant applicant = getApplicantByNric(userList, appNric);
+						Applicant applicant = appProj.getApplicantByNric(appNric);
 						if (applicant == null) throw new InvalidInput("applicant");
 						System.out.println(ANSI_CYAN + "===== Applicant Booking Receipt =====" + ANSI_RESET);
-						this.applicantReceipt(getBTOById(btoProj.getItems(), applicant.getBTOId()), applicant);
+						this.applicantReceipt(btoProj.getBTOById(applicant.getBTOId()), applicant);
 						break;
 					case 6: return;
 					default: throw new InvalidInput("option");

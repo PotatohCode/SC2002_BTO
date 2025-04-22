@@ -4,10 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class Manager extends Users {
+public class Manager extends Users implements Admin {
 	
 	private List<Integer> managingId = new ArrayList<>();
 	private Scanner sc;
@@ -44,41 +45,41 @@ public class Manager extends Users {
 	}
 	
 	// view officer applications
-	public List<Application> viewOfficers(BTO bto, String filter) {
-		int count = 1;
-		List<Application> applicationList = bto.getOfficerApplications();
-		if (filter != null) {
-			applicationList = applicationList.stream().filter(a -> a.getStatus() == filter).toList();
-		} else {
-			applicationList.sort((s1, s2) -> s1.getStatus().compareToIgnoreCase(s2.getStatus())); // sort by status
-		}
-		for (Application application : applicationList) {
-			Officer officer = (Officer) application.getApplicant();
-			System.out.println(count++ + ". Name: " + officer.getName() + " Status: " + application.getStatus());
-		}
-		return applicationList; // for update status
-	}
+//	public List<Application> viewOfficers(BTO bto, String filter) {
+//		int count = 1;
+//		List<Application> applicationList = bto.getOfficerApplications();
+//		if (filter != null) {
+//			applicationList = applicationList.stream().filter(a -> a.getStatus() == filter).toList();
+//		} else {
+//			applicationList.sort((s1, s2) -> s1.getStatus().compareToIgnoreCase(s2.getStatus())); // sort by status
+//		}
+//		for (Application application : applicationList) {
+//			Officer officer = (Officer) application.getApplicant();
+//			System.out.println(count++ + ". Name: " + officer.getName() + " Status: " + application.getStatus());
+//		}
+//		return applicationList; // for update status
+//	}
 	
 	// update officer status
-	public void updateOfficerStatus(BTO bto) {
-		List<Application> applicationList = this.viewOfficers(bto, "pending");
-		System.out.print("Select officer to update: ");
-		int option = sc.nextInt() - 1;
-		System.out.print("Enter 1 to accept and 0 to reject");
-		int status = sc.nextInt();
-		switch (status) {
-			case 0: 
-				applicationList.get(option).setStatus("unsuccessful", this.getRole());
-				break;
-			case 1:
-				if (bto.getNumOfficer() < bto.getMaxOfficer()) {
-					applicationList.get(option).setStatus("successful", this.getRole());
-				} else {
-					System.out.println("There is no more slots for officers.");
-				}
-				break;
-		}
-	}
+//	public void updateOfficerStatus(BTO bto) {
+//		List<Application> applicationList = this.viewOfficers(bto, "pending");
+//		System.out.print("Select officer to update: ");
+//		int option = sc.nextInt() - 1;
+//		System.out.print("Enter 1 to accept and 0 to reject");
+//		int status = sc.nextInt();
+//		switch (status) {
+//			case 0: 
+//				applicationList.get(option).setStatus("unsuccessful", this.getRole());
+//				break;
+//			case 1:
+//				if (bto.getNumOfficer() < bto.getMaxOfficer()) {
+//					applicationList.get(option).setStatus("successful", this.getRole());
+//				} else {
+//					System.out.println("There is no more slots for officers.");
+//				}
+//				break;
+//		}
+//	}
 	
 	// view all bto applications
 //	public List<Application> viewApplications(BTO bto, String filter) {
@@ -97,44 +98,44 @@ public class Manager extends Users {
 //	}
 	
 	// update application status
-	public void updateApplicationStatus(BTO bto) {
-		System.out.println("2-Room flat left: " + bto.getNum2Rooms() + " 3-Room flat left: " + bto.getNum3Rooms());
-		List<Application> applicationList = this.viewApplications(bto, "pending");
-		System.out.print("Select application to update: ");
-		int option = sc.nextInt() - 1;
-		System.out.print("Enter 1 to accept and 0 to reject");
-		int status = sc.nextInt();
-		Application application = applicationList.get(option);
-		switch (status) {
-			case 0: 
-				application.setStatus("unsuccessful", this.getRole());
-				break;
-			case 1:
-				if ((application.getRoomType() == 2 && bto.getNum2Rooms() > 0) || (application.getRoomType() == 3 && bto.getNum3Rooms() > 0)) {
-					applicationList.get(option).setStatus("successful", this.getRole());
-				} else {
-					System.out.println("There is not enough rooms available.");
-				}
-				break;
-		}
-	}
+//	public void updateApplicationStatus(BTO bto) {
+//		System.out.println("2-Room flat left: " + bto.getNum2Rooms() + " 3-Room flat left: " + bto.getNum3Rooms());
+//		List<Application> applicationList = this.viewApplications(bto, "pending");
+//		System.out.print("Select application to update: ");
+//		int option = sc.nextInt() - 1;
+//		System.out.print("Enter 1 to accept and 0 to reject");
+//		int status = sc.nextInt();
+//		Application application = applicationList.get(option);
+//		switch (status) {
+//			case 0: 
+//				application.setStatus("unsuccessful", this.getRole());
+//				break;
+//			case 1:
+//				if ((application.getRoomType() == 2 && bto.getNum2Rooms() > 0) || (application.getRoomType() == 3 && bto.getNum3Rooms() > 0)) {
+//					applicationList.get(option).setStatus("successful", this.getRole());
+//				} else {
+//					System.out.println("There is not enough rooms available.");
+//				}
+//				break;
+//		}
+//	}
 	
 	// update withdraw status
-	public void updateWithdrawStatus(BTO bto, List<Application> appList) {
-		List<Application> applicationList = this.viewApplications(bto, "withdraw");
-		System.out.print("Select application to update: ");
-		int option = sc.nextInt() - 1;
-		System.out.print("Enter 1 to accept and 0 to reject");
-		int status = sc.nextInt();
-		switch (status) {
-			case 0: 
-				applicationList.get(option).setStatus("successful", this.getRole());
-				break;
-			case 1:
-//				appList.remove(application);
-				break;
-		}
-	}
+//	public void updateWithdrawStatus(BTO bto, List<Application> appList) {
+//		List<Application> applicationList = this.viewApplications(bto, "withdraw");
+//		System.out.print("Select application to update: ");
+//		int option = sc.nextInt() - 1;
+//		System.out.print("Enter 1 to accept and 0 to reject");
+//		int status = sc.nextInt();
+//		switch (status) {
+//			case 0: 
+//				applicationList.get(option).setStatus("successful", this.getRole());
+//				break;
+//			case 1:
+////				appList.remove(application);
+//				break;
+//		}
+//	}
 	
 	// view all enquiries
 //	public List<Enquiries> viewEnquiries(BTO bto, String filter) {
@@ -242,6 +243,27 @@ public class Manager extends Users {
 	// delete BTO
 	public void deleteBTO(int btoId) {
 		this.managingId.remove(btoId); // need to remove at BTOApp
+	}
+	
+	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, List<Users> userList) {
+		boolean run = true;
+		while (run) {
+			try {
+				System.out.println(ANSI_CYAN + "Menu:" + ANSI_RESET);
+				System.out.println("1. ")
+			} catch (InputMismatchException ime) {
+				System.out.println("Invalid input!");
+			} catch (InvalidInput ii) {
+				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
+			}
+		}
+	}
+
+	@Override
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj,
+			Project<Enquiries> enquiryProj) throws InvalidInput {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -1,6 +1,6 @@
 package BTO;
 
-public class Application {
+public class Application implements Search<Integer> {
 	
 	private int applicationId;
 	private static int idCounter = 0;
@@ -74,5 +74,20 @@ public class Application {
 		System.out.println("Application Id: " + this.applicationId 
 							+ "\nStatus: " + this.status
 							+ (this.type.equals("bto") ? "\nRoom Type: "  + this.roomType : ""));
+	}
+	
+	@Override
+	public boolean getById(Integer id) {
+		return this.applicationId == id;
+	}
+	
+	@Override
+	public boolean getByBTO(Integer id) {
+		return this.btoId == id;
+	}
+	
+	@Override
+	public boolean getByUser(Integer id) {
+		return this.applicant.getId() == id;
 	}
 }

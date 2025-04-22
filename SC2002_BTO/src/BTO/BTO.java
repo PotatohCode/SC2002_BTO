@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BTO {
+public class BTO implements Search<Integer> {
 	
 	private int btoId;
 	private static int idCounter = 0;
@@ -191,6 +191,11 @@ public class BTO {
 							"No. of 2 Rooms: " + this.num2Rooms + "\n" +
 							"No. of 3 Rooms: " + this.num3Rooms);
 	}
+
+	@Override
+	public boolean getById(Integer id) {
+		return this.btoId == id;
+	}
 	
 //	public void replyEnquiries(int id, String reply) {
 //		for (int enquiriesId : this.enquiriesList) { 
@@ -213,5 +218,7 @@ public class BTO {
 //			this.applicationList[index].status = status;
 //		}
 //	}
+	
+	
 
 }

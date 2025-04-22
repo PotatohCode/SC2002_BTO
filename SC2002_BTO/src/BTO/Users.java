@@ -7,7 +7,7 @@ import java.util.Objects;
  *  @author Kah Teck, Keanan, Javier, Junnoske, Kevin
  *  @version 16/4/25
  */
-public class Users {
+public class Users implements Search<String> {
 	
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static final String ANSI_RED = "\u001B[31m";
@@ -141,5 +141,10 @@ public class Users {
 	 */
 	public boolean searchNric(String nric) {
 		return this.nric == nric;
+	}
+	
+	@Override
+	public boolean getById(String id) {
+		return this.nric.equals(id);
 	}
 }

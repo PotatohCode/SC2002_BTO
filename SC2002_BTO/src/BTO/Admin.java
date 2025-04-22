@@ -14,7 +14,7 @@ public interface Admin {
 		return false;
 	}
 	
-	public void managingBTO(List<Integer> managingId, List<BTO> btoList, List<Enquiries> enquiryList, List<Application> appList) throws InvalidInput;
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InvalidInput;
 	
 	
 }

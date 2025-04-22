@@ -13,7 +13,7 @@ import java.util.Scanner;
  *  Applicant.java: generic class for all users
  * 
  */
-public class Applicant extends Users implements Search {
+public class Applicant extends Users {
 	
 	private int applicationId = -1;
 	private List<Integer> enquiriesId = new ArrayList<>();
@@ -174,7 +174,7 @@ public class Applicant extends Users implements Search {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
 						}
-						printBTOs(availBTO);
+						btoProj.printBTOs(availBTO);
 						break;
 						
 					case 2: 
@@ -185,12 +185,12 @@ public class Applicant extends Users implements Search {
 								System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 								break;
 							}
-							printBTOs(applyList);
+							btoProj.printBTOs(applyList);
 							
 							System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
 							int inpBTOId = sc.nextInt();
 							sc.nextLine();
-							BTO selectBTO = getBTOById(btoProj.getItems(),inpBTOId);
+							BTO selectBTO = btoProj.getBTOById(inpBTOId);
 							if (selectBTO == null) throw new InvalidInput("BTO"); // invalid capture
 							
 							int inpRT = 2;
@@ -204,9 +204,9 @@ public class Applicant extends Users implements Search {
 							Application application = this.createApplication(selectBTO, inpRT);
 							if (application != null) appProj.addItem(application);
 						} else { // access application
-							BTO appliedBTO = getBTOById(btoProj.getItems(), this.getBTOId());
+							BTO appliedBTO = btoProj.getBTOById(this.getBTOId());
 							appliedBTO.printBTO();
-							Application application = getAppById(appProj.getItems(), this.getApplicationId());
+							Application application = appProj.getAppById(this.getApplicationId());
 							application.printApplication();
 							System.out.println();
 							if (application.getStatus().equals("successful") || application.getStatus().equals("booking")) {
@@ -241,13 +241,13 @@ public class Applicant extends Users implements Search {
 					case 3:
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						List<BTO> btoList = this.getApplicableBTOs(btoProj.getItems());
-						if (this.getBTOId() > -1) getBTOById(btoProj.getItems(), this.getBTOId()).printBTO();
-						printBTOs(btoList);
+						if (this.getBTOId() > -1) btoProj.getBTOById(this.getBTOId()).printBTO();
+						btoProj.printBTOs(btoList);
 						System.out.println();
 						System.out.print(ANSI_YELLOW + "Enter BTO id: " + ANSI_RESET);
 						int inpBTOId = sc.nextInt();
 						sc.nextLine();
-						BTO applyBTO = getBTOById(btoProj.getItems(), inpBTOId);
+						BTO applyBTO = btoProj.getBTOById(inpBTOId);
 						if (applyBTO == null) throw new InvalidInput("BTO"); // invalid capture
 						
 						System.out.print(ANSI_YELLOW + "Enter enquiry: " + ANSI_RESET);
@@ -258,18 +258,18 @@ public class Applicant extends Users implements Search {
 						
 					case 4:
 						System.out.println(ANSI_CYAN + "===== Enquiries =====" + ANSI_RESET);
-						List<Enquiries> userEnquiry = getEnquiryByUser(enquiryProj.getItems(), this.getId());
+						List<Enquiries> userEnquiry = enquiryProj.getEnquiryByUser(this.getId());
 						if (userEnquiry.size() == 0) {
 							System.out.println(ANSI_RED + "No exisiting enquiry\n" + ANSI_RESET);
 							break;
 						}
-						printEnquiries(userEnquiry, btoProj.getItems());
+						enquiryProj.printEnquiries(userEnquiry, btoProj.getItems());
 						
 						System.out.print(ANSI_YELLOW + "Enter enquiry id or -1 to return: " + ANSI_RESET);
 						int enquiryId = sc.nextInt();
 						sc.nextLine();
 						if (enquiryId == -1) break; 
-						Enquiries enquiry = getEnquiryById(enquiryProj.getItems(), enquiryId);
+						Enquiries enquiry = enquiryProj.getEnquiryById(enquiryId);
 						if (enquiry == null) throw new InvalidInput("enquiry"); // invalid capture
 						
 						System.out.println(ANSI_CYAN + "Enquiry Menu:" + ANSI_RESET);

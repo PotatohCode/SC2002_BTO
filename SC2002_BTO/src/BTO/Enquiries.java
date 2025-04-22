@@ -2,7 +2,7 @@ package BTO;
 
 import java.util.List;
 
-public class Enquiries {
+public class Enquiries implements Search<Integer> {
 	
 	private int enquiryId;
 	private int btoId;
@@ -65,4 +65,19 @@ public class Enquiries {
     						+ "\nEnquiry: " + this.enquiry
     						+ (this.replierId > -1 ? "\nReply: " + this.reply : ""));
     }
+
+	@Override
+	public boolean getById(Integer id) {
+		return this.enquiryId == id;
+	}
+	
+	@Override
+	public boolean getByBTO(Integer id) {
+		return this.btoId == id;
+	}
+	
+	@Override
+	public boolean getByUser(Integer id) {
+		return this.enquirierId == id;
+	}
 }
