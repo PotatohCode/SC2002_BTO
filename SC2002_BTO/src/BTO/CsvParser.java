@@ -29,7 +29,17 @@ public class CsvParser {
 	//bto csv header positions
 	private static final int projNameIdx = 0, neighborIdx = 1, t1Idx = 2, t1NumIdx = 3, t1PriceIdx = 4, t2Idx = 5, t2NumIdx = 6, t2PriceIdx = 7, appOpenIdx = 8, appCloseIdx = 9, managerIdx = 10, officerSlotsIdx = 11, officersIdx = 12;
 	
-
+	/**
+	 * Parses a CSV file containing user records and adds them to the provided user project list.
+	 * 
+	 * Supports parsing users with roles: "applicant", "officer", and "manager".
+	 * Each line (excluding header) should include user details in the format:
+	 * name, nric, age, marital status, password
+	 *
+	 * @param filename the path to the CSV file
+	 * @param userList the {@link Project} container to store parsed {@link Users}
+	 * @param role the user role to assign for all parsed entries (e.g., "applicant")
+	 */
     public static void parseUsersCsv(String filename, Project<Users> userList, String role) {
         File file = new File(filename);
         try (Scanner sc = new Scanner(file)) {
@@ -61,6 +71,22 @@ public class CsvParser {
         }
     }
 
+    /**
+     * Parses a CSV file containing BTO project details and adds them to the provided project list.
+     * 
+     * This method extracts BTO project attributes such as room count, dates, and manager assignment.
+     * It also attempts to associate officers with the project if listed.
+     * 
+     * Officer names are matched by string against the user list (case-sensitive).
+     * Projects with unresolved managers are skipped and reported in console.
+     *
+     * CSV Format (simplified, header assumed):
+     * name, neighbourhood, room types, open date, close date, manager, officer limit, [officer names]
+     *
+     * @param filename the path to the CSV file containing project data
+     * @param btoList the {@link Project} container to store parsed {@link BTO} objects
+     * @param userList the {@link Project} containing all users, used for linking managers and officers
+     */
     public static void parseProjectsCsv(String filename, Project<BTO> btoList, Project<Users> userList) {
         File file = new File(filename);
         try (Scanner sc = new Scanner(file)) {

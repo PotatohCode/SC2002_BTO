@@ -23,7 +23,7 @@ public class FilterUtil {
      * <ul>
      *     <li>Neighbourhood keyword (case-insensitive)</li>
      *     <li>Room type availability (2-room or 3-room)</li>
-     *     <li>Project open status (start & end date)</li>
+     *     <li>Project open status (start and end date)</li>
      *     <li>Project name keyword (case-insensitive)</li>
      * </ul>
      * 

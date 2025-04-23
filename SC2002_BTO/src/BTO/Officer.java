@@ -38,32 +38,71 @@ public class Officer extends Applicant implements Admin {
 	private List<Integer> managingId = new ArrayList<>();
 	private List<Integer> officerAppId = new ArrayList<>();
 	private Scanner sc = new Scanner(System.in);
-
+	
+	/**
+	 * Constructs a new officer user.
+	 * Officer inherits applicant-level permissions and is initialised with officer-specific role.
+	 *
+	 * @param nric     the NRIC of the officer
+	 * @param name     the name of the officer
+	 * @param age      the age of the officer
+	 * @param password the officer’s login password
+	 * @param married  the marital status of the officer
+	 */
 	public Officer (String nric, String name, int age, String password, boolean married) {
 		super(nric, name, age, password, married, "officer");
 	}
 	
-	// getter
+	// getters
+	/**
+	 * Returns the list of BTO IDs the officer is currently managing.
+	 *
+	 * @return a list of BTO project IDs
+	 */
 	public List<Integer> getManaging() {
 		return this.managingId;
 	}
 	
+	/**
+	 * Returns the list of BTO project IDs the officer has applied to manage.
+	 *
+	 * @return a list of BTO project IDs for officer applications
+	 */
 	public List<Integer> getOfficerApp() {
 		return this.officerAppId;
 	}
 	
 	// setter
+	/**
+	 * Adds a BTO project ID to the officer's list of managing projects.
+	 *
+	 * @param btoId the BTO project ID
+	 */
 	public void addManagingBTO(int btoId) {
 		this.managingId.add(btoId);
 	}
 	
 	// functions
 	// check criteria to apply officer
+	/**
+	 * Checks whether the officer is eligible to apply to manage a BTO project.
+	 *
+	 * @param bto the BTO project to evaluate
+	 * @param clash whether the application period clashes with an existing assignment
+	 * @return true if officer is eligible, false otherwise
+	 */
 	public boolean canApplyOfficer(BTO bto, boolean clash) {
 		return !clash && bto.getId() != this.btoId && !this.managingId.contains(bto.getId()) && !this.officerAppId.contains(bto.getId()) && bto.getMaxOfficer() > 0;
 	}
 	
 	// application functions
+	/**
+	 * Creates an officer application for the given BTO project if eligible.
+	 *
+	 * @param bto the BTO project to apply for
+	 * @param clash whether the project clashes with other assigned periods
+	 * @return a new {@link Application} object if valid; null otherwise
+	 */
 	public Application createOfficerApplication(BTO bto, boolean clash) {
 		if (this.canApplyOfficer(bto, clash)) {
 			Application apply = new Application(this, bto.getId(), "pending", "officer");
@@ -77,6 +116,16 @@ public class Officer extends Applicant implements Admin {
 		}
 	}
 	
+	/**
+	 * Checks for any date overlaps between the given application dates and
+	 * the officer's current managing projects.
+	 *
+	 * @param start the start date of the new project
+	 * @param end the end date of the new project
+	 * @param btoIdList the list of BTO IDs the officer is already assigned to
+	 * @param btoList the list of all BTO projects
+	 * @return true if any date overlaps are found, false otherwise
+	 */
 	public boolean clashApplication(Date start, Date end, List<Integer> btoIdList, List<BTO> btoList) {
 		for (BTO bto : btoList) {
 			if (btoIdList.contains(bto.getId())) {
@@ -89,6 +138,14 @@ public class Officer extends Applicant implements Admin {
 	}
 	
 	// book room
+	/**
+	 * Books a room on behalf of an applicant if the application is valid and the officer is authorised.
+	 * This method updates application status, reduces available units, and updates applicant profile.
+	 *
+	 * @param bto the BTO project associated with the booking
+	 * @param application the applicant’s application to be booked
+	 * @return the NRIC of the applicant if booking succeeds, otherwise {@code null}
+	 */
 	public String bookBTO(BTO bto, Application application) {
 		if (application.getStatus() == "booking" && this.managingId.contains(bto.getId())) {
 			switch (application.getRoomType()) {
@@ -126,6 +183,12 @@ public class Officer extends Applicant implements Admin {
 	}
 	
 	// generate receipt
+	/**
+	 * Generates and prints a booking receipt for a given applicant and their assigned BTO project.
+	 *
+	 * @param bto the booked BTO project
+	 * @param applicant the applicant whose booking details are printed
+	 */
 	public void applicantReceipt(BTO bto, Applicant applicant) {
 		applicant.printApplicant();
 		bto.printBTO();
@@ -148,6 +211,18 @@ public class Officer extends Applicant implements Admin {
 //		enquiry.setReply(reply, this.getId(), this.getRole());
 //	}
 	
+	
+	/**
+	 * Menu handler for officers managing BTO projects.
+	 * Officers can respond to enquiries and approve booking requests.
+	 *
+	 * @param managingId the list of BTO project IDs this officer manages
+	 * @param btoProj the full list of BTO projects
+	 * @param appProj the application records
+	 * @param enquiryProj the enquiry records
+	 * @throws InputMismatchException for invalid inputs
+	 * @throws InvalidInput for any domain-specific invalid selections
+	 */
 	@Override
 	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InputMismatchException, InvalidInput {
 		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
@@ -213,6 +288,16 @@ public class Officer extends Applicant implements Admin {
 		}
 	}
 	
+
+	/**
+	 * Displays the officer's main menu and handles officer-specific workflows.
+	 * Includes actions like officer application, booking confirmation, enquiry response, and password updates.
+	 *
+	 * @param btoProj the BTO project container
+	 * @param appProj the application container
+	 * @param enquiryProj the enquiry container
+	 * @param userList the full list of users
+	 */
 	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, List<Users> userList) {
 		boolean run = true;
 		while (run) {

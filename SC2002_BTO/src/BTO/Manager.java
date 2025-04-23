@@ -8,29 +8,91 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Represents a Manager in the BTO system.
+ * 
+ * A Manager is responsible for overseeing BTO project creation and maintenance.
+ * They are authorised to create, edit, and delete BTO projects, view applicant and officer applications,
+ * manage application statuses, and respond to user enquiries.
+ * 
+ * This class extends {@link Users} and implements the {@link Admin} interface, inheriting user authentication,
+ * search filters, and BTO administrative functionalities.
+ * 
+ * Key Responsibilities:
+ * <ul>
+ *   <li>Create and edit BTO project details (room counts, dates, visibility, etc.)</li>
+ *   <li>Manage applicant and officer applications tied to their BTOs</li>
+ *   <li>Respond to user enquiries</li>
+ *   <li>Ensure no application date overlaps between BTOs they manage</li>
+ * </ul>
+ * 
+ * The list of BTO projects managed by a Manager is tracked via their {@code managingId} list.
+ * Each Manager is identified uniquely and automatically assigned a role of "manager".
+ * 
+ * @see Users
+ * @see Admin
+ * @see BTO
+ * @see Application
+ * @see Enquiries
+ * 
+ * @version 23/04/2025
+ * @author Kah Teck,
+ *         Keanan,
+ *         Javier,
+ *         Junnoske,
+ *         Kevin
+ */
 public class Manager extends Users implements Admin {
 	
 	private List<Integer> managingId = new ArrayList<>();
 	private Scanner sc;
 	private SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
+	
+	/**
+	 * Constructs a new Manager user in the BTO system.
+	 * Initialises with the "manager" role and sets up internal state.
+	 *
+	 * @param nric     the NRIC of the manager
+	 * @param name     the name of the manager
+	 * @param age      the age of the manager
+	 * @param password the login password
+	 * @param married  marital status
+	 */
 	public Manager(String nric, String name, int age, String password, boolean married) {
 		super(nric, name, age, password, married, "manager");
 		sc = new Scanner(System.in);
 	}
 	
 	// getter
+
+	/**
+	 * Returns the list of BTO project IDs that the manager is managing.
+	 *
+	 * @return list of managed BTO IDs
+	 */
 	public List<Integer> getManaging() {
 		return this.managingId;
 	}
 	
 	// setter
+	/**
+	 * Adds a BTO project to the manager's managed list.
+	 *
+	 * @param btoId the BTO project ID to add
+	 */
 	public void addManagingBTO(int btoId) {
 		this.managingId.add(btoId);
 	}
 	
 	// functions
 	// view all BTO
+	
+	/**
+	 * Displays a list of BTOs, filtered to show either only those managed by this user or all.
+	 *
+	 * @param btoList the full list of BTOs
+	 * @param own     true to show only managed BTOs, false for all
+	 */
 	public void viewBTOs(List<BTO> btoList, boolean own) {
 		int count = 1;
 		for (BTO bto : btoList) {
@@ -138,6 +200,17 @@ public class Manager extends Users implements Admin {
 //	}
 	
 	// create BTO project
+	/**
+	 * Creates a new BTO project via manager input.
+	 * Validates date range and optional reassignment to another manager.
+	 *
+	 * @param userProj     the project containing all users
+	 * @param managingBTO  current list of BTOs managed by this user
+	 * @return the new {@link BTO} project object
+	 * @throws ParseException if the input date format is invalid
+	 * @throws InputMismatchException for scanner input mismatches
+	 * @throws InvalidInput if any field is invalid (e.g. manager not found, invalid dates)
+	 */
 	public BTO createBTO(Project<Users> userProj, List<BTO> managingBTO) throws ParseException, InputMismatchException, InvalidInput  {
 			Date applicationStart, applicationEnd, now = new Date();
 			System.out.print("Enter BTO name: ");
@@ -180,6 +253,14 @@ public class Manager extends Users implements Admin {
 	}
 	
 	// edit BTO project
+	/**
+	 * Allows manager to edit fields of an existing BTO project.
+	 * Includes validations for ownership and input constraints.
+	 *
+	 * @param bto the BTO project to edit
+	 * @throws InputMismatchException for scanner mismatches
+	 * @throws InvalidInput if invalid fields or access violations occur
+	 */
 	public void editBTO(BTO bto) throws InputMismatchException, InvalidInput {
 		if (managingId.contains(bto.getId()) && bto.getManager().getId() == this.getId()) {
 			System.out.println("Which field would you like to edit?\n"
@@ -251,10 +332,25 @@ public class Manager extends Users implements Admin {
 	}
 	
 	// delete BTO
+	/**
+	 * Removes a BTO from the manager’s list of managed projects.
+	 * Does not remove from the global BTO list.
+	 *
+	 * @param btoId the ID of the BTO to remove
+	 */
 	public void deleteBTO(int btoId) {
 		this.managingId.remove(btoId); // need to remove BTO for all existing application and user
 	}
 	
+	/**
+	 * Displays the main menu for the manager and handles all role-specific workflows.
+	 * Includes creating, editing, viewing BTOs, replying to enquiries, and managing applications.
+	 *
+	 * @param btoProj     the project containing all BTOs
+	 * @param appProj     the project containing all applications
+	 * @param enquiryProj the project containing all enquiries
+	 * @param userProj    the project containing all users
+	 */
 	public void showMenu(Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj) {
 		boolean run = true;
 		while (run) {
@@ -355,7 +451,18 @@ public class Manager extends Users implements Admin {
 			}
 		}
 	}
-
+	
+	/**
+	 * Handles the "Manage BTO" menu for a manager.
+	 * Enables access to applications, officer requests, enquiry replies, and BTO settings.
+	 *
+	 * @param managingId  list of BTO project IDs managed by this user
+	 * @param btoProj     the BTO data project
+	 * @param appProj     the application data project
+	 * @param enquiryProj the enquiry data project
+	 * @throws InputMismatchException for scanner issues
+	 * @throws InvalidInput for invalid option selection or access
+	 */
 	@Override
 	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InputMismatchException, InvalidInput {
 		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
@@ -476,6 +583,14 @@ public class Manager extends Users implements Admin {
 		
 	}
 	
+	/**
+	 * Updates the status of an application (officer or applicant) based on manager decisions.
+	 * Handles authentication, availability of rooms, and success conditions.
+	 *
+	 * @param app the application to update
+	 * @param status 1 to accept, 2 to reject
+	 * @param bto the BTO project the application is tied to
+	 */
 	public void updateAppStatus(Application app, int status, BTO bto) {
 		if (app.getType().equals("officer")) {
 			if (bto.getNumOfficer() >= bto.getMaxOfficer()) {

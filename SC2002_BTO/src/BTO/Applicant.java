@@ -194,6 +194,13 @@ public class Applicant extends Users {
 		}
 	}
 	
+	/**
+	 * Resets the applicant's current application state.
+	 * 
+	 * This method clears the BTO ID and application ID, effectively marking
+	 * the user as having no active application in the system.
+	 * It is typically called after a successful withdrawal or administrative reset.
+	 */
 	public void withdraw() {
 		this.btoId = -1;
 		this.applicationId = -1;

@@ -39,6 +39,14 @@ public class BTOApp {
 	private static Project<Enquiries> enquiryProj = new Project<>();
 	private static Project<Application> appProj = new Project<>();
 	
+	/**
+	 * Handles user login via NRIC and password input.
+	 * 
+	 * Prompts user for credentials and validates them.
+	 * If incorrect, recursively prompts until valid credentials are provided.
+	 * 
+	 * @return the logged-in {@link Users} object
+	 */
 	public static Users login() {
 		List<Users> userList = userProj.getItems();
 		System.out.print(ANSI_YELLOW + "Enter NRIC: " + ANSI_RESET);
@@ -56,10 +64,24 @@ public class BTOApp {
 		return user;
 	}
 	
+	/**
+	 * Capitalizes the first character of a string.
+	 * 
+	 * @param s the string to capitalize
+	 * @return the capitalized string
+	 */
 	public static String capitalize(String s) {
 		return s.substring(0,1).toUpperCase() + s.substring(1);
 	}
 	
+
+	/**
+	 * Main entry point of the application.
+	 * Loads users and project data from CSV files,
+	 * then launches login and role-based menu interaction.
+	 * 
+	 * @param args not used
+	 */
 	public static void main(String[] args) {
 		//input users
 		CsvParser.parseUsersCsv(applicantPath, userProj, "applicant");

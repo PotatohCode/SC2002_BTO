@@ -127,19 +127,39 @@ public class Users implements Search<String> {
 	public String getRole() {
 		return this.role;
 	}
-	
+
+	/**
+	 * Returns the neighbourhood keyword filter applied by the user.
+	 *
+	 * @return keyword for neighbourhood filtering
+	 */
 	public String getFilterNeighbourhood() {
 	    return this.filterNeighbourhood;
 	}
 	
+	/**
+	 * Returns the selected room type filter.
+	 *
+	 * @return 2, 3, or -1 for "any"
+	 */
 	public int getFilterRoomType() {
 	    return this.filterRoomType;
 	}
 	
+	/**
+	 * Returns whether the user wants to see only currently open BTO applications.
+	 *
+	 * @return true if filtering to open applications only
+	 */
 	public boolean isFilterOpenOnly() {
 	    return this.filterOpenOnly;
 	}
 	
+	/**
+	 * Returns the project name keyword filter applied by the user.
+	 *
+	 * @return keyword for project name filtering
+	 */
 	public String getFilterProjectName() {
 	    return this.filterProjectName;
 	}
@@ -185,18 +205,40 @@ public class Users implements Search<String> {
 		this.password = new_password;
 	}
 	
+	/**
+	 * Sets the neighbourhood keyword filter for BTO search.
+	 *
+	 * @param filterNeighbourhood the filter keyword
+	 */
 	public void setFilterNeighbourhood(String filterNeighbourhood) {
 	    this.filterNeighbourhood = filterNeighbourhood;
 	}
 	
+	
+	/**
+	 * Sets the room type filter (2, 3, or -1).
+	 *
+	 * @param filterRoomType the room type filter value
+	 */
 	public void setFilterRoomType(int filterRoomType) {
 	    this.filterRoomType = filterRoomType;
 	}
 	
+	/**
+	 * Sets whether the BTO filter should include only currently open projects.
+	 *
+	 * @param filterOpenOnly true to filter by open projects only
+	 */
 	public void setFilterOpenOnly(boolean filterOpenOnly) {
 	    this.filterOpenOnly = filterOpenOnly;
 	}
 	
+
+	/**
+	 * Sets the keyword used to filter project names in BTO search.
+	 *
+	 * @param filterProjectName the project name filter keyword
+	 */
 	public void setFilterProjectName(String filterProjectName) {
 	    this.filterProjectName = filterProjectName;
 	}
@@ -210,6 +252,12 @@ public class Users implements Search<String> {
 		return this.nric == nric;
 	}
 	
+	/**
+	 * Returns true if this user matches the given ID (for interface-based search).
+	 *
+	 * @param id the NRIC to match
+	 * @return true if matched, false otherwise
+	 */
 	@Override
 	public boolean getById(String id) {
 		return this.nric.equals(id);
