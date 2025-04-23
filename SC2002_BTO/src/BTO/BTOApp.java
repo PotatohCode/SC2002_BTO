@@ -1,5 +1,6 @@
 package BTO;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -88,44 +89,49 @@ public class BTOApp {
 		CsvParser.parseUsersCsv(officerPath, userProj, "officer");
 		CsvParser.parseUsersCsv(managerPath, userProj, "manager");
 		CsvParser.parseProjectsCsv(projectPath, btoProj, userProj);
-
+		
 		boolean run = true;
 		while (run) {
-			System.out.println("1. Login\n2. Close");
-			System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
-			int start = sc.nextInt();
-			sc.nextLine();
-			if (start == 1) {
-				Users user = login();
-				System.out.println(ANSI_CYAN + "\nWelcome " + capitalize(user.getRole()) + " " + user.getName() + "!" + ANSI_RESET);
-				
-				if (user.getRole().equals("applicant")) {
-					Applicant applicant = (Applicant) user;
-					applicant.showMenu(btoProj, appProj, enquiryProj);
-				} else if (user.getRole().equals("officer")) {
+			try {
+				System.out.println("1. Login\n2. Close");
+				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+				int start = sc.nextInt();
+				sc.nextLine();
+				if (start == 1) {
+					Users user = login();
+					System.out.println(ANSI_CYAN + "\nWelcome " + capitalize(user.getRole()) + " " + user.getName() + "!" + ANSI_RESET);
 					
-					System.out.println("Which menu would you like to access?\n"
-										+ "1. Applicant\n"
-										+ "2. Officer");
-					System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
-					int menuSelect = sc.nextInt();
-					sc.nextLine();
-					
-					if (menuSelect == 1) {
-						Applicant officer = (Applicant) user;
-						officer.showMenu(btoProj, appProj, enquiryProj);
-					} else {
-						Officer officer = (Officer) user;
-						officer.showMenu(btoProj, appProj, enquiryProj, userProj.getItems());
+					if (user.getRole().equals("applicant")) {
+						Applicant applicant = (Applicant) user;
+						applicant.showMenu(btoProj, appProj, enquiryProj);
+					} else if (user.getRole().equals("officer")) {
+						
+						System.out.println("Which menu would you like to access?\n"
+											+ "1. Applicant\n"
+											+ "2. Officer");
+						System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
+						int menuSelect = sc.nextInt();
+						sc.nextLine();
+						
+						if (menuSelect == 1) {
+							Applicant officer = (Applicant) user;
+							officer.showMenu(btoProj, appProj, enquiryProj);
+						} else {
+							Officer officer = (Officer) user;
+							officer.showMenu(btoProj, appProj, enquiryProj, userProj.getItems());
+						}
+					} else if (user.getRole().equals("manager")) {
+						Manager manager = (Manager) user;
+						manager.showMenu(btoProj, appProj, enquiryProj, userProj);
 					}
-				} else if (user.getRole().equals("manager")) {
-					Manager manager = (Manager) user;
-					manager.showMenu(btoProj, appProj, enquiryProj, userProj);
+				} else {
+					System.out.println(ANSI_RED + "End of program\n" + ANSI_RESET);
+					sc.close();
+					run = false;
 				}
-			} else {
-				System.out.println(ANSI_RED + "End of program\n" + ANSI_RESET);
-				sc.close();
-				run = false;
+			} catch (InputMismatchException ime) {
+				System.out.println(ANSI_RED + "Invalid input!\n" + ANSI_RESET);
+				sc.nextLine();
 			}
 		}
 	}

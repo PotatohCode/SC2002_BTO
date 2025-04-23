@@ -26,6 +26,7 @@ public class BTO implements Search<Integer> {
 	private static int idCounter = 0;
 	private String name;
 	private String neighbourhood;
+	private double price;
 	private int num2Rooms;
 	private int num3Rooms;
 	private int maxOfficer = 10;
@@ -48,9 +49,10 @@ public class BTO implements Search<Integer> {
 	 * @param maxOfficer       the maximum number of officers allowed
 	 * @param visible          whether the project is currently visible to users
 	 */
-	public BTO(String name, String neighbourhood, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
+	public BTO(String name, String neighbourhood, double price, int num2Rooms, int num3Rooms, Date applicationStart, Date applicationEnd, Manager manager, int maxOfficer, boolean visible) {
 		this.name = name;
 		this.neighbourhood = neighbourhood;
+		this.price = price;
 		this.num2Rooms = num2Rooms;
 		this.num3Rooms = num3Rooms;
 		this.applicationStart = applicationStart;
@@ -88,6 +90,14 @@ public class BTO implements Search<Integer> {
 	 */
 	public String getNeighbourhood() {
 		return this.neighbourhood;
+	}
+	
+	/**
+	 * Returns the price in 2dp
+	 * @return price
+	 */
+	public String getPrice() {
+		return String.format( "%.2f", this.price);
 	}
 	
 	/**
@@ -194,6 +204,17 @@ public class BTO implements Search<Integer> {
 	public void setNeighbourhood(String neighbourhood, int id) {
 		if (this.authManager(id)) {
 			this.neighbourhood = neighbourhood;
+		}
+	}
+	
+	/**
+	 * Updates the price if called by the manager.
+	 * @param price
+	 * @param id
+	 */
+	public void setPrice(double price, int id) {
+		if (this.authManager(id)) {
+			this.price = price;
 		}
 	}
 	
@@ -413,6 +434,8 @@ public class BTO implements Search<Integer> {
 	public void printBTO(boolean manager) {
 		System.out.println("Project Id: " + this.btoId + "\n" + 
 							"Project Name: " + this.name + "\n" +
+							"Neighbourhood: " + this.neighbourhood + "\n" + 
+							"Selling price: $" + this.getPrice() + "\n" +
 							"Application Start: " + stringDate(this.applicationStart) + "\n" +
 							"Application End: " + stringDate(this.applicationEnd) + "\n" +
 							"No. of 2 Rooms: " + this.num2Rooms + "\n" +

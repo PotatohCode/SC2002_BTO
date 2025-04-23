@@ -142,6 +142,7 @@ public class CsvParser {
                 BTO bto = new BTO(
                         value[projNameIdx],
                         value[neighborIdx],
+                        Double.parseDouble(value[t1PriceIdx]),
                         num2Rooms,
                         num3Rooms,
                         dateOpen,

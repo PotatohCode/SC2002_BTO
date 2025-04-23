@@ -217,6 +217,9 @@ public class Manager extends Users implements Admin {
 			String name = sc.nextLine();
 			System.out.print("Enter BTO neighbourhood: ");
 			String neighbourhood = sc.nextLine();
+			System.out.print("Enter selling price: ");
+			double price = sc.nextDouble();
+			sc.nextLine();
 			System.out.print("Enter number of 2 rooms: ");
 			int num2Rooms = sc.nextInt();
 			sc.nextLine();
@@ -247,7 +250,7 @@ public class Manager extends Users implements Admin {
 			int maxOfficer = sc.nextInt();
 			sc.nextLine();
 			
-			BTO newBTO = new BTO(name, neighbourhood, num2Rooms, num3Rooms, applicationStart, applicationEnd, this, maxOfficer, (now.compareTo(applicationStart) > 0 && now.compareTo(applicationStart) <= 0));
+			BTO newBTO = new BTO(name, neighbourhood, price, num2Rooms, num3Rooms, applicationStart, applicationEnd, this, maxOfficer, (now.compareTo(applicationStart) > 0 && now.compareTo(applicationStart) <= 0));
 			return newBTO;
 		
 	}
@@ -266,13 +269,14 @@ public class Manager extends Users implements Admin {
 			System.out.println("Which field would you like to edit?\n"
 								+ "1. Name: " + bto.getName()
 								+ "\n2. Neighbourhood: " + bto.getNeighbourhood()
-								+ "\n3. No. of 2 Rooms: " + bto.getNum2Rooms()
-								+ "\n4. No. of 3 Rooms: " + bto.getNum3Rooms()
-								+ "\n5. Application Start Date: " + df.format(bto.getApplicationStart())
-								+ "\n6. Application End Date: " + df.format(bto.getApplicationEnd())
-								+ "\n7. No. of Officers: " + bto.getMaxOfficer()
-								+ "\n8. Visibility: " + bto.getVisible()
-								+ "\n9. Return to menu");
+								+ "\n3. Selling price: $" + bto.getPrice()
+								+ "\n4. No. of 2 Rooms: " + bto.getNum2Rooms()
+								+ "\n5. No. of 3 Rooms: " + bto.getNum3Rooms()
+								+ "\n6. Application Start Date: " + df.format(bto.getApplicationStart())
+								+ "\n7. Application End Date: " + df.format(bto.getApplicationEnd())
+								+ "\n8. No. of Officers: " + bto.getMaxOfficer()
+								+ "\n9. Visibility: " + bto.getVisible()
+								+ "\n10. Return to menu");
 			System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 			int option = sc.nextInt();
 		
@@ -289,38 +293,43 @@ public class Manager extends Users implements Admin {
 						bto.setNeighbourhood(neighbourhood, this.getId());
 						break;
 					case 3:
+						System.out.print("Enter selling price: ");
+						double price = sc.nextDouble();
+						bto.setPrice(price, this.getId());
+						break;
+					case 4:
 						System.out.print("Enter new no of 2 rooms: ");
 						int num2 = sc.nextInt();
 						bto.setNum2Rooms(num2, this.getId());
 						break;
-					case 4:
+					case 5:
 						System.out.print("Enter new no of 3 rooms: ");
 						int num3 = sc.nextInt();
 						bto.setNum3Rooms(num3, this.getId());
 						break;
-					case 5:
+					case 6:
 						System.out.print("Enter new start date (dd/MM/yyyy): ");
 						String startDate = sc.nextLine();
 						Date applicationStart = df.parse(startDate);
 						if (bto.getApplicationEnd().compareTo(applicationStart) < 0) throw new InvalidInput("dates");
 						bto.setApplicationStart(df.parse(startDate), this.getId());
 						break;
-					case 6:
+					case 7:
 						System.out.print("Enter new end date (dd/MM/yyyy): ");
 						String endDate = sc.nextLine();
 						Date applicationEnd = df.parse(endDate);
 						if (applicationEnd.compareTo(bto.getApplicationStart()) < 0) throw new InvalidInput("dates");
 						bto.setApplicationEnd(df.parse(endDate), this.getId());
 						break;
-					case 7:
+					case 8:
 						System.out.print("Enter new max no. of officers: ");
 						int num = sc.nextInt();
 						bto.setMaxOfficer(num, this.getId());
 						break;
-					case 8:
+					case 9:
 						bto.toggleVisible(this.getId());
 						break;
-					case 9:
+					case 10:
 						break;
 					default: throw new InvalidInput("options");
 				}
@@ -357,7 +366,7 @@ public class Manager extends Users implements Admin {
 		
 		List<Applicant> aList = userProj.getApplicantByBTO(bto.getId());
 		for (Applicant u : aList) {
-			u.withdraw();
+			u.resetApplication();
 		}
 		
 		List<Officer> oList = userProj.getOfficerByBTO(bto.getId());
@@ -471,8 +480,10 @@ public class Manager extends Users implements Admin {
 				}
 			} catch (ParseException pe) {
 				System.out.println(ANSI_RED + "Date format is wrong!\n" + ANSI_RESET);
+				sc.nextLine();
 			} catch (InputMismatchException ime) {
 				System.out.println(ANSI_RED + "Invalid input!\n" + ANSI_RESET);
+				sc.nextLine();
 			} catch (InvalidInput ii) {
 				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
 			}
@@ -640,14 +651,14 @@ public class Manager extends Users implements Admin {
 				return;
 			}
 		} else {
+			Applicant applicant = (Applicant) app.getApplicant();
 			if (app.getStatus().equals("booking") || app.getStatus().equals("booked")) {
 				System.out.println(ANSI_RED + "Flat has already been booked\n" + ANSI_RESET);
 				return;
 			}
 			if (app.getStatus().equals("withdrawing")) {
 				app.setStatus(status == 1 ? "withdrawn" : "pending", this.getRole());
-				Applicant applicant = (Applicant) app.getApplicant();
-				applicant.withdraw();
+				if (status == 1) applicant.resetApplication();
 				System.out.println(ANSI_GREEN + "Application updated!\n" + ANSI_RESET);
 				return;
 			}
@@ -657,6 +668,14 @@ public class Manager extends Users implements Admin {
 			} else if (app.getRoomType() == 3 && bto.getNum3Rooms() <= 0) {
 				System.out.println(ANSI_RED + "Insufficient rooms available\n" + ANSI_RESET);
 				return;
+			}
+			if (app.getStatus().equals("pending")) {
+				if (status == 1) {
+					applicant.setApplicationId(app.getId());
+					applicant.setBTOId(app.getBTOId());
+				} else {
+					applicant.resetApplication();
+				}
 			}
 		}
 		app.setStatus(status == 1 ? "successful" : "unsuccessful", this.getRole());

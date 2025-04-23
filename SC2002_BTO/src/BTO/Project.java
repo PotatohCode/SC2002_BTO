@@ -255,7 +255,7 @@ public class Project<T> {
 	 */
 	public void printEnquiries(List<Enquiries> enquiryList, List<BTO> btoList) {
 		for (Enquiries e : enquiryList) {
-			System.out.println("Project Name: " + getBTOById(e.getBTOId()).getName());
+			System.out.println("Project Name: " + getBTOById(btoList, e.getBTOId()).getName());
 			e.printEnquiry();
 			System.out.println();
 		}

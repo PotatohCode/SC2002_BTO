@@ -128,7 +128,7 @@ public class Application implements Search<Integer> {
 	public void setStatus(String status, String role) {
 		if (type == "bto" && (role == "manager" || role == "officer")) {
 			this.status = status; 
-		} else if (type == "bto" && role == "applicant" && (status.equals("withdraw") || status.equals("booking"))) {
+		} else if (type == "bto" && role == "applicant" && (status.equals("withdrawing") || status.equals("booking"))) {
 			this.status = status;
 		} else if (type == "officer" && role == "manager") {
 			this.status = status;

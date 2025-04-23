@@ -418,6 +418,7 @@ public class Officer extends Applicant implements Admin {
 				}
 			} catch (InputMismatchException ime) {
 				System.out.println("Invalid input!");
+				sc.nextLine();
 			} catch (InvalidInput ii) {
 				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
 			}

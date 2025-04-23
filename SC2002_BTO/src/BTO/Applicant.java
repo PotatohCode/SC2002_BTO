@@ -27,6 +27,7 @@ import java.util.Scanner;
 public class Applicant extends Users {
 	
 	private int applicationId = -1;
+	private List<Integer> allApplications = new ArrayList<>();
 	private List<Integer> enquiriesId = new ArrayList<>();
 	protected int btoId = -1;
 	private int roomType = -1;
@@ -96,6 +97,21 @@ public class Applicant extends Users {
 	}
 	
 	// setter
+	/**
+	 * sets application id
+	 * @param id of the application
+	 */
+	public void setApplicationId(int id) {
+		this.applicationId = id;
+	}
+	
+	/**
+	 * sets bto id
+	 * @param id of the bto
+	 */
+	public void setBTOId(int id) {
+		this.btoId = id;
+	}
 	
 	/**
 	 * Sets the room type for the applicant, if validated by the role and NRIC.
@@ -187,7 +203,7 @@ public class Applicant extends Users {
 		if (application.getId() == this.applicationId 
 				&& application.getApplicant().getId() == this.getId() 
 				&& (application.getStatus().equals("successful") || application.getStatus().equals("booked") ||application.getStatus().equals("booking") )) {
-			application.setStatus("withdraw", this.getRole());
+			application.setStatus("withdrawing", this.getRole());
 			System.out.println(ANSI_GREEN + "Withdrawal submitted!\n" + ANSI_RESET);
 		} else {
 			System.out.println(ANSI_RED + "Unable to withdraw\n" + ANSI_RESET);
@@ -201,7 +217,7 @@ public class Applicant extends Users {
 	 * the user as having no active application in the system.
 	 * It is typically called after a successful withdrawal or administrative reset.
 	 */
-	public void withdraw() {
+	public void resetApplication() {
 		this.btoId = -1;
 		this.applicationId = -1;
 	}
@@ -292,12 +308,13 @@ public class Applicant extends Users {
 			try {
 				System.out.println(ANSI_CYAN + "Menu:" + ANSI_RESET);
 				System.out.println("1. View available BTOs");
-				System.out.println((this.getApplicationId() > -1 ? "2. Access application" : "2. Apply for BTO"));
-				System.out.println("3. Submit enquiry");
-				System.out.println("4. Access enquiries");
-				System.out.println("5. Change Search Filters");
-				System.out.println("6. Change Password");
-				System.out.println("7. Logout");
+				System.out.println("2. Apply for BTO");
+				System.out.println("3. Access applications");
+				System.out.println("4. Submit enquiry");
+				System.out.println("5. Access enquiries");
+				System.out.println("6. Change Search Filters");
+				System.out.println("7. Change Password");
+				System.out.println("8. Logout");
 			
 				System.out.print(ANSI_YELLOW + "Enter option: " + ANSI_RESET);
 				int menuOption = sc.nextInt();
@@ -318,7 +335,7 @@ public class Applicant extends Users {
 						
 					case 2: 
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
-						if (this.getApplicationId() == -1) { // create application
+						if (this.applicationId == -1) { // create application
 							List<BTO> applyList = this.getApplicableBTOs(btoProj.getItems());
 							applyList = FilterUtil.applyUserFilters(applyList, this);
 							if (applyList.size() == 0) {
@@ -342,13 +359,24 @@ public class Applicant extends Users {
 							}
 							
 							Application application = this.createApplication(selectBTO, inpRT);
-							if (application != null) appProj.addItem(application);
-						} else { // access application
-							BTO appliedBTO = btoProj.getBTOById(this.getBTOId());
-							appliedBTO.printBTO();
-							Application application = appProj.getAppById(this.getApplicationId());
-							application.printApplication();
+							if (application != null) {
+								appProj.addItem(application);
+								this.allApplications.add(application.getId());
+							}
+						} else { 
+							System.out.println(ANSI_RED + "You have an ongoing application\n" + ANSI_RESET);
+						}
+						break;
+					case 3:
+						System.out.println(ANSI_CYAN + "===== Applications =====" + ANSI_RESET);
+						for (int id : this.allApplications) {
+							Application tmpApp = appProj.getAppById(id);
+							btoProj.getBTOById(tmpApp.getBTOId()).printBTO();
+							tmpApp.printApplication();
 							System.out.println();
+						}
+						Application application = appProj.getAppById(this.getApplicationId());
+						if (application != null) {
 							if (application.getStatus().equals("successful") || application.getStatus().equals("booking")) {
 								System.out.println(ANSI_CYAN + "BTO Menu:" + ANSI_RESET);
 								System.out.println("1. Withdraw application");
@@ -377,12 +405,11 @@ public class Applicant extends Users {
 							}
 						}
 						break;
-						
-					case 3:
+					case 4:
 						System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 						List<BTO> btoList = this.getApplicableBTOs(btoProj.getItems());
 						if (this.getBTOId() > -1) btoProj.getBTOById(this.getBTOId()).printBTO();
-						if (btoList.size() == 0 && this.getBTOId() != -1) {
+						if (btoList.size() == 0 && this.getBTOId() == -1) {
 							System.out.println(ANSI_RED + "No BTO available\n" + ANSI_RESET);
 							break;
 						}
@@ -400,7 +427,7 @@ public class Applicant extends Users {
 						enquiryProj.addItem(this.createEnquiries(inpEnq, inpBTOId));
 						break;
 						
-					case 4:
+					case 5:
 						System.out.println(ANSI_CYAN + "===== Enquiries =====" + ANSI_RESET);
 						List<Enquiries> userEnquiry = enquiryProj.getEnquiryByUser(this.getId());
 						if (userEnquiry.size() == 0) {
@@ -437,7 +464,7 @@ public class Applicant extends Users {
 							default: throw new InvalidInput("option");
 						}
 						break;
-					case 5:
+					case 6:
 					    System.out.print("Enter neighbourhood keyword (leave blank to skip): ");
 					    this.setFilterNeighbourhood(sc.nextLine());
 
@@ -454,7 +481,7 @@ public class Applicant extends Users {
 
 					    System.out.println(ANSI_GREEN + "Filters updated!" + ANSI_RESET);
 					    break;
-					case 6:
+					case 7:
 					    System.out.print(ANSI_YELLOW + "Enter new password: " + ANSI_RESET);
 					    String newPwd = sc.nextLine();
 
@@ -466,11 +493,12 @@ public class Applicant extends Users {
 					    this.changePassword(newPwd);
 					    System.out.println(ANSI_GREEN + "Password changed successfully!\n" + ANSI_RESET);
 					    break;
-					case 7: return;
+					case 8: return;
 					default: throw new InvalidInput("option");
 				}
 			} catch (InputMismatchException ime) {
-				System.out.println("Invalid input!");
+				System.out.println(ANSI_RED + "Invalid input!\n" + ANSI_RESET);
+				sc.nextLine();
 			} catch (InvalidInput ii) {
 				System.out.println(ANSI_RED + ii.getMessage() + "\n" + ANSI_RESET);
 			}
