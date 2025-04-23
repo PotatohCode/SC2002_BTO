@@ -43,10 +43,11 @@ public interface Admin {
 	 * @param btoProj the project list containing all BTOs
 	 * @param appProj the project list containing applications
 	 * @param enquiryProj the project list containing enquiries
+	 * @param userProj the project list containing users
 	 * @throws InputMismatchException if user input format is incorrect
 	 * @throws InvalidInput if a required field is invalid
 	 */
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj)  throws InputMismatchException, InvalidInput;
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj)  throws InputMismatchException, InvalidInput;
 	
 	/**
 	 * Replies to a specific enquiry if it hasn't been answered yet.

@@ -82,6 +82,15 @@ public class Officer extends Applicant implements Admin {
 		this.managingId.add(btoId);
 	}
 	
+	/**
+	 * Remove a BTO project ID from the officer's list of managing projects.
+	 *
+	 * @param btoId the BTO project ID
+	 */
+	public void removeManagingBTO(int btoId) {
+		this.managingId.remove(btoId);
+	}
+	
 	// functions
 	// check criteria to apply officer
 	/**
@@ -220,11 +229,12 @@ public class Officer extends Applicant implements Admin {
 	 * @param btoProj the full list of BTO projects
 	 * @param appProj the application records
 	 * @param enquiryProj the enquiry records
+	 * @param userProj the user records
 	 * @throws InputMismatchException for invalid inputs
 	 * @throws InvalidInput for any domain-specific invalid selections
 	 */
 	@Override
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InputMismatchException, InvalidInput {
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj) throws InputMismatchException, InvalidInput {
 		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
 		if (managingBTO.size() <= 0) {
@@ -362,7 +372,7 @@ public class Officer extends Applicant implements Admin {
 						break;
 						
 					case 4:
-						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj);
+						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj, null);
 						break;
 					case 5:
 						System.out.print(ANSI_YELLOW + "Enter applicant nric: " + ANSI_RESET);

@@ -334,12 +334,39 @@ public class Manager extends Users implements Admin {
 	// delete BTO
 	/**
 	 * Removes a BTO from the manager’s list of managed projects.
-	 * Does not remove from the global BTO list.
+	 * Removes BTO from application list, enquiry list and removes application from users and remove bto from officer manageing
 	 *
 	 * @param btoId the ID of the BTO to remove
+	 * @param btoProj     the project containing all BTOs
+	 * @param appProj     the project containing all applications
+	 * @param enquiryProj the project containing all enquiries
+	 * @param userProj    the project containing all users
 	 */
-	public void deleteBTO(int btoId) {
-		this.managingId.remove(btoId); // need to remove BTO for all existing application and user
+	public void deleteBTO(BTO bto, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj) {
+		List<Application> appList = new ArrayList<>();
+		appList.addAll(appProj.getAppByBTO(bto.getId(), "bto", null));
+		appList.addAll(appProj.getAppByBTO(bto.getId(), "officer", null));
+		for (Application a : appList) {
+			appProj.removeItem(a);
+		}
+		
+		List<Enquiries> enqList = enquiryProj.getEnquiryByBTO(bto.getId());
+		for (Enquiries e : enqList) {
+			enquiryProj.removeItem(e);
+		}
+		
+		List<Applicant> aList = userProj.getApplicantByBTO(bto.getId());
+		for (Applicant u : aList) {
+			u.withdraw();
+		}
+		
+		List<Officer> oList = userProj.getOfficerByBTO(bto.getId());
+		for (Officer u : oList) {
+			u.removeManagingBTO(bto.getId());
+		}
+		
+		btoProj.removeItem(bto);
+		System.out.println(ANSI_GREEN + "BTO deleted!\n" + ANSI_RESET);
 	}
 	
 	/**
@@ -380,7 +407,7 @@ public class Manager extends Users implements Admin {
 						btoProj.printBTOs(allBTOs, true);
 						break;
 					case 2:
-						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj);
+						managingBTO(this.getManaging(), btoProj, appProj, enquiryProj, userProj);
 						break;
 						
 					case 3:
@@ -460,11 +487,12 @@ public class Manager extends Users implements Admin {
 	 * @param btoProj     the BTO data project
 	 * @param appProj     the application data project
 	 * @param enquiryProj the enquiry data project
+	 * @param userProj	  the user data project
 	 * @throws InputMismatchException for scanner issues
 	 * @throws InvalidInput for invalid option selection or access
 	 */
 	@Override
-	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj) throws InputMismatchException, InvalidInput {
+	public void managingBTO(List<Integer> managingId, Project<BTO> btoProj, Project<Application> appProj, Project<Enquiries> enquiryProj, Project<Users> userProj) throws InputMismatchException, InvalidInput {
 		List<BTO> managingBTO = btoProj.getItems().stream().filter(b -> managingId.contains(b.getId())).toList();
 		System.out.println(ANSI_CYAN + "===== BTOs =====" + ANSI_RESET);
 		if (managingBTO.size() <= 0) {
@@ -579,6 +607,13 @@ public class Manager extends Users implements Admin {
 				
 			case 5: editBTO(bto);
 				break;
+			
+			case 6: deleteBTO(bto, btoProj, appProj, enquiryProj, userProj);
+				break;
+			
+			case 7: break;
+			
+			default: throw new InvalidInput("option");
 		}
 		
 	}

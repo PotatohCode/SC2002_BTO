@@ -188,6 +188,39 @@ public class Project<T> {
 	}
 	
 	/**
+	 * Retrieve applicant by btoid
+	 * @param btoId the bto id of the applicant
+	 * @return a list of applicants part of the bto
+	 */
+	public List<Applicant> getApplicantByBTO(int btoId) {
+		List<Users> userList = (List<Users>) this.list;
+		userList =	userList.stream()
+				.filter(a -> a.getRole().equals("applicant") || a.getRole().equals("officer")).toList();
+		List<Applicant> appList = new ArrayList<>();
+		for (Users u : userList) {
+			appList.add((Applicant) u);
+		}
+		return appList.stream().filter(a -> a.getBTOId() == btoId).toList();
+	}
+	
+	/**
+	 * Retrieve officer by btoid
+	 * @param btoId the bto id of the officer
+	 * @return a list of officer part of the bto
+	 */
+	public List<Officer> getOfficerByBTO(int btoId) {
+		List<Users> userList = (List<Users>) this.list;
+		userList =	userList.stream()
+				.filter(a -> a.getRole().equals("officer")).toList();
+		List<Officer> oList = new ArrayList<>();
+		for (Users u : userList) {
+			oList.add((Officer) u);
+		}
+		return oList.stream()
+				.filter(a -> a.getManaging().contains(btoId)).toList();
+	}
+	
+	/**
 	 * Prints details for all BTO projects in the provided list.
 	 *
 	 * @param btoList the list of BTOs to print
