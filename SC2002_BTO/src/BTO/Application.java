@@ -112,12 +112,6 @@ public class Application implements Search<Integer> {
 	}
 	
 	// setter
-//	public void setRoomType(int roomType) {
-//		if (roomType == 2 || roomType == 3) {
-//			this.roomType = roomType;
-//		}
-//	}
-	
 	/**
 	 * Updates the status of the application based on user role and type of application.
 	 *

@@ -204,23 +204,6 @@ public class Officer extends Applicant implements Admin {
 		System.out.println();
 	}
 	
-//	public void replyEnquiry(Project<Enquiries> enquiryProj) throws InvalidInput {
-//		System.out.print(ANSI_YELLOW + "Enter enquiry id: " + ANSI_RESET);
-//		int inpEnqId = sc.nextInt();
-//		sc.nextLine();
-//		Enquiries enquiry = enquiryProj.getEnquiryById(inpEnqId);
-//		enquiry.printEnquiry();
-//		if (enquiry.getReplierId() > -1) {
-//			System.out.println(ANSI_RED + "Enquiry already has a reply\n" + ANSI_RESET);
-//			return;
-//		}
-//		System.out.print(ANSI_YELLOW + "Enter reply: " + ANSI_RESET);
-//		String reply = sc.nextLine();
-//		if (reply.length() <= 0) throw new InvalidInput("reply");
-//		enquiry.setReply(reply, this.getId(), this.getRole());
-//	}
-	
-	
 	/**
 	 * Menu handler for officers managing BTO projects.
 	 * Officers can respond to enquiries and approve booking requests.

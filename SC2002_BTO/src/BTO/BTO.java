@@ -391,18 +391,6 @@ public class BTO implements Search<Integer> {
 		}
 	}
 	
-//	public void addApplication(Application application) {
-//		this.applicationList.add(application);
-//	}
-//	
-//	public void removeApplication(Application application) {
-//		this.applicationList.remove(application);
-//	}
-//	
-//	public void addOfficerApp(Application application) {
-//		this.officerAppList.add(application);
-//	}
-	
 	/**
 	 * Converts a {@link Date} to a readable string format "dd/MM/yyyy".
 	 *
@@ -454,28 +442,4 @@ public class BTO implements Search<Integer> {
 		return this.btoId == id;
 	}
 	
-//	public void replyEnquiries(int id, String reply) {
-//		for (int enquiriesId : this.enquiriesList) { 
-//			if (id == enquiriesId) {
-//				
-//			}
-//		}
-//	}
-	
-//	public void updateOfficerStatus(Officer o, String status, Users u) {
-//		// need to add error handling for throwing failed authentication
-//		if (authManager(u)) {
-//			this.officerList.put(o, status);
-//		}
-//	}
-//	
-//	public void updateApplicationStatus(int index, String status, Users u) {
-//		// need to add error handling for throwing failed authentication
-//		if (authManager(u) || authOfficer(u)) {
-//			this.applicationList[index].status = status;
-//		}
-//	}
-	
-	
-
 }
