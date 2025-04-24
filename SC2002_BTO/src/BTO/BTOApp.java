@@ -116,9 +116,11 @@ public class BTOApp {
 						if (menuSelect == 1) {
 							Applicant officer = (Applicant) user;
 							officer.showMenu(btoProj, appProj, enquiryProj);
-						} else {
+						} else if (menuSelect == 2) {
 							Officer officer = (Officer) user;
 							officer.showMenu(btoProj, appProj, enquiryProj, userProj.getItems());
+						} else {
+							System.out.println(ANSI_RED + "Invalid option!\n" + ANSI_RESET);
 						}
 					} else if (user.getRole().equals("manager")) {
 						Manager manager = (Manager) user;
